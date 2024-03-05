@@ -1,0 +1,4 @@
+example2.txt
+Hello?
+hello
+wow
