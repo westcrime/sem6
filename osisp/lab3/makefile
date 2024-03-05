@@ -13,7 +13,7 @@ translating.o: translating.c translating.h
 	$(CC) $(CFLAGS) -c translating.c
 
 clean:
-	del /F /Q program.exe main.o translating.o 	# rm -f program $(objects)
+	rm -f program $(objects)
 
 test: program
 	program < test_input.txt
