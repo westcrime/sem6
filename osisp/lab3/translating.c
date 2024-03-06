@@ -21,8 +21,16 @@ char* text_to_morse(const char* text) {
         } else {
             for (int k = 0; k < strlen(alphabet); k++) {
                 if (c == alphabet[k]) {
-                    strcpy(answer + j, morse_code[k]);
-                    j += strlen(morse_code[k]);
+                    const char* morse_char = morse_code[k];
+                    while (*morse_char) {
+                        answer[j] = *morse_char;
+                        j++;
+                        morse_char++;
+                        if (*morse_char) { // Добавляем пробел только если это не конец строки
+                            answer[j] = ' ';
+                            j++;
+                        }
+                    }
                     break;
                 }
             }
