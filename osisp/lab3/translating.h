@@ -4,4 +4,4 @@
 #include <string.h>
 #include <ctype.h>
 
-char* text_to_morse(const char* text);
+void convertToMorseCode();

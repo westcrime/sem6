@@ -1,41 +1,43 @@
-#include "translating.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 
-char* text_to_morse(const char* text) {
-    const char* morse_code[] = {
-        ".-", "-...", "-.-.", "-..", ".", "..-.", "--.", "....", "..", // A-I
-        ".---", "-.-", ".-..", "--", "-.", "---", ".--.", "--.-", ".-.", // J-R
-        "...", "-", "..-", "...-", ".--", "-..-", "-.--", "--..", // S-Z
-        "-----", ".----", "..---", "...--", "....-", ".....", "-....", "--...", "---..", "----.", // 0-9
-        ".-.-.-", "--..--", "..--..", "-.-.--", "-....-", ".----.", "-.--.", "-.--.-", ".-...", "---...", "-.-.-.", "-...-", ".-.-.", "-....-", "..--.-", ".-..-.", ".--.-.", "-.--.-", ".-.-..", // Special characters
-    };
+const char *morseCode[] = {".-", "-...", "-.-.", "-..", ".", "..-.",
+    "--.", "....", "..", ".---", "-.-", ".-..", "--", "-.", "---", ".--.", "--.-",
+    ".-.", "...", "-", "..-", "...-", ".--", "-..-", "-.--", "--.."}; // Morse code from A to Z
 
-    const char* alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,?'!/()&:;=+-_\"$@";
-    //const char* alphabet = "АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ0123456789.,?'!/()&:;=+-_\"$@";
-    char* answer = (char*)malloc(512 * sizeof(char));
-    int j = 0;
-    for (int i = 0; i < strlen(text); i++) {
-        char c = toupper(text[i]); 
-        if (c == ' ') {
-            answer[j] = ' ';
-            j++;
-        } else {
-            for (int k = 0; k < strlen(alphabet); k++) {
-                if (c == alphabet[k]) {
-                    const char* morse_char = morse_code[k];
-                    while (*morse_char) {
-                        answer[j] = *morse_char;
-                        j++;
-                        morse_char++;
-                        if (*morse_char) { // Добавляем пробел только если это не конец строки
-                            answer[j] = ' ';
-                            j++;
-                        }
-                    }
-                    break;
-                }
-            }
+void convertToMorseCode();
+
+/* Conversion of english text to morse code */
+void convertToMorseCode()
+{   
+    printf("\t\t\t\tEnglish Text to Morse Code\n\n");
+    printf("Please enter English text:\n");
+    char text[1000]; // for input text
+    scanf(" %[^\n]s", text);
+    int textLength = strlen(text);
+
+    char morseCodeValue[10000] = "";
+   
+    int index;
+    for (index = 0; index < textLength; ++index)
+    {
+        if (isalpha(text[index]))
+        {
+            text[index] = toupper(text[index]);
+            strcat(morseCodeValue, morseCode[text[index]-'A']);
+            strcat(morseCodeValue, " ");
         }
-    }
-    answer[j] = '\0';
-    return answer;
+        else if (isspace(text[index]))
+        {
+            strcat(morseCodeValue, "  ");
+        }
+        else
+        {
+            printf("Unsupported character: %c\n", text[index]);
+            return;
+        }
+    } 
+    printf("\nMorse Code is \"%s\"\n", morseCodeValue);
 }
