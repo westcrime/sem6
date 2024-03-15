@@ -100,6 +100,8 @@ def draw_hist(cleared_sorted_distribution, step, title):
     heights = get_heights(x_axis, cleared_sorted_distribution)
 
     plt.bar([value + step / 2 for value in x_axis], heights, step)
+    plt.xlabel('Значение')
+    plt.ylabel('Количество')
     plt.title(title)
 
 
@@ -111,4 +113,6 @@ def draw_distribution_plot(sorted_distribution, density, title):
     ys = [distribution_function(sorted_distribution, x) for x in xs]
 
     plt.plot(xs, ys)
+    plt.xlabel('Значение')
+    plt.ylabel('Вероятность')
     plt.title(title)
