@@ -1,17 +1,3 @@
--- Запросы для создания таблиц студентов и групп
-
-CREATE TABLE students (
-    id NUMBER,
-    name VARCHAR2(256),
-    group_id NUMBER
-);
-
-CREATE TABLE groups (
-    id NUMBER,
-    name VARCHAR2(256),
-    c_val NUMBER
-);
-
 -- Триггеры для проверки на уникальность имен групп
 
 CREATE OR REPLACE TRIGGER check_groups_name_unique
@@ -26,40 +12,9 @@ BEGIN
 	END IF;
 END;
 
--- Триггеры для генерации автоинкрементного ключа
 
-CREATE SEQUENCE students_seq
-START WITH 1
-INCREMENT BY 1
-NOCACHE;
 
-CREATE OR REPLACE TRIGGER autoincrement_students
-BEFORE INSERT ON students
-FOR EACH ROW
-BEGIN
-    SELECT students_seq.nextval INTO :NEW.id FROM dual;
-END;
 
-CREATE SEQUENCE groups_seq
-START WITH 1
-INCREMENT BY 1
-NOCACHE;
-
-CREATE OR REPLACE TRIGGER autoincrement_groups
-BEFORE INSERT ON groups
-FOR EACH ROW
-BEGIN
-    SELECT groups_seq.nextval INTO :NEW.id FROM dual;
-END;
-
--- Триггер реализующий каскадное удаление студентов при удалении группы
-
-CREATE OR REPLACE TRIGGER students_fk
-BEFORE DELETE ON groups
-FOR EACH ROW
-BEGIN
-    DELETE FROM students WHERE group_id = :OLD.id;
-END;
 
 -- Таблица журнала
 

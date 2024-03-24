@@ -1,0 +1,15 @@
+drop trigger update_groups_cval;
+drop procedure restore_students;
+drop trigger students_audit;
+drop sequence log_id_seq;
+drop table STUDENTS_LOG;
+drop trigger students_fk;
+drop trigger students_group_id_foreign_key_trigger;
+drop trigger autoincrement_groups;
+drop trigger autoincrement_students;
+drop trigger check_groups_name_unique;
+drop trigger check_groups_id_unique;
+drop trigger check_students_name_unique;
+drop trigger check_students_id_unique;
+drop table students;
+drop table groups;

@@ -1,6 +1,6 @@
 const { getSubKeys, decrypt, encrypt, pack, unpack, typeson } = require("des");
 
-const user_id = 'Nazar';
+const user_id = 'Dima';
 //const user_id = "Undefined";
 const service_id = '5002';
 const user_key = new Uint8Array([ 2, 3, 4, 5, 5, 4, 3, 2 ]);

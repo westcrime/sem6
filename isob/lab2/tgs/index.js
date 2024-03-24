@@ -19,6 +19,18 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 //     while(new Date().getTime() < now + sleepDuration);
 // }
 
+function genUserKey() {
+    const max = 255;
+    return new Uint8Array([ Math.floor(Math.random() * max),
+                            Math.floor(Math.random() * max),
+                            Math.floor(Math.random() * max),
+                            Math.floor(Math.random() * max),
+                            Math.floor(Math.random() * max),
+                            Math.floor(Math.random() * max),
+                            Math.floor(Math.random() * max),
+                            Math.floor(Math.random() * max) ]);
+}
+
 app.post('/server/authentication', (req, res) => {
     let body = typeson.revive(req.body);
     console.log('Message received: ', body);
@@ -50,7 +62,7 @@ app.post('/server/authentication', (req, res) => {
     }
 
     if (tgs_service_keys.has(service_id)) {
-        let c_service_key = tgs_service_keys.get(service_id);
+        let c_service_key = genUserKey();
         let tgs = {
             c_service_key: c_service_key,
             user_id: auth.user_id,

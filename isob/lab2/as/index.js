@@ -5,7 +5,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 let user_keys = new Map(); // user_id, key
-user_keys.set('Nazar', new Uint8Array([ 2, 3, 4, 5, 5, 4, 3, 2]));
+user_keys.set('Dima', new Uint8Array([ 2, 3, 4, 5, 5, 4, 3, 2]));
 let as_tgs_key = new Uint8Array([ 1, 2, 3, 4, 5, 6, 7, 8 ]);
 let tgs_id = '5001'; // port of tgs
 
