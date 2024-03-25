@@ -1,0 +1,225 @@
+{
+  "type": "Program",
+  "body": [
+    {
+      "type": "CallExpression",
+      "name": "define",
+      "params": [
+        {
+          "type": "CallExpression",
+          "name": "sum-list",
+          "params": [
+            {
+              "type": "Variable",
+              "name": "lst"
+            }
+          ]
+        },
+        {
+          "type": "CallExpression",
+          "name": "if",
+          "params": [
+            {
+              "type": "CallExpression",
+              "name": "null?",
+              "params": [
+                {
+                  "type": "Variable",
+                  "name": "lst"
+                }
+              ]
+            },
+            {
+              "type": "Literal",
+              "value": "0"
+            },
+            {
+              "type": "CallExpression",
+              "name": "+",
+              "params": [
+                {
+                  "type": "CallExpression",
+                  "name": "car",
+                  "params": [
+                    {
+                      "type": "Variable",
+                      "name": "lst"
+                    }
+                  ]
+                },
+                {
+                  "type": "CallExpression",
+                  "name": "sum-list",
+                  "params": [
+                    {
+                      "type": "CallExpression",
+                      "name": "cdr",
+                      "params": [
+                        {
+                          "type": "Variable",
+                          "name": "lst"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "CallExpression",
+      "name": "define",
+      "params": [
+        {
+          "type": "Variable",
+          "name": "x"
+        },
+        {
+          "type": "CallExpression",
+          "name": "list",
+          "params": [
+            {
+              "type": "Literal",
+              "value": "1.2"
+            },
+            {
+              "type": "Literal",
+              "value": "2"
+            },
+            {
+              "type": "Literal",
+              "value": "3"
+            },
+            {
+              "type": "Literal",
+              "value": "4"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "CallExpression",
+      "name": "if",
+      "params": [
+        {
+          "type": "CallExpression",
+          "name": "list?",
+          "params": [
+            {
+              "type": "Variable",
+              "name": "x"
+            }
+          ]
+        },
+        {
+          "type": "CallExpression",
+          "name": "display",
+          "params": [
+            {
+              "type": "CallExpression",
+              "name": "sum-list",
+              "params": [
+                {
+                  "type": "Variable",
+                  "name": "x"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "CallExpression",
+          "name": "display",
+          "params": [
+            {
+              "type": "Literal",
+              "value": "\"variable x is not list\""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "CallExpression",
+      "name": "if",
+      "params": [
+        {
+          "type": "Literal",
+          "value": "#f"
+        },
+        {
+          "type": "CallExpression",
+          "name": "display",
+          "params": [
+            {
+              "type": "Literal",
+              "value": "\"Impossible\""
+            }
+          ]
+        },
+        {
+          "type": "CallExpression",
+          "name": "display",
+          "params": [
+            {
+              "type": "Literal",
+              "value": "\"fdsfsd\""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "CallExpression",
+      "name": "define",
+      "params": [
+        {
+          "type": "Identifier",
+          "name": "sym"
+        },
+        {
+          "type": "Literal",
+          "value": "'symbol'"
+        }
+      ]
+    },
+    {
+      "type": "CallExpression",
+      "name": "+",
+      "params": [
+        {
+          "type": "Literal",
+          "value": "+1"
+        },
+        {
+          "type": "Literal",
+          "value": "-2"
+        }
+      ]
+    },
+    {
+      "type": "CallExpression",
+      "name": "if",
+      "params": [
+        {
+          "type": "CallExpression",
+          "name": "<",
+          "params": [
+            {
+              "type": "Literal",
+              "value": "2"
+            },
+            {
+              "type": "Literal",
+              "value": "3"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

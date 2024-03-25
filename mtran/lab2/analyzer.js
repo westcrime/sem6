@@ -1,6 +1,10 @@
 const test = require('./service');
+const {isValidIdentifier, spaceText, splitIgnoringQuotes} = require('./service')
 
-function analyze(listOfElements) {
+function analyze(data) {
+    const spacedText = spaceText(data);
+    let listOfElements = splitIgnoringQuotes(spacedText, ' ');
+
     const answer = [];
     normal_answer = [];
     const categoryMappings = {
@@ -71,7 +75,7 @@ function analyze(listOfElements) {
         } else if (element.startsWith(';')) {
             answer.push({'element': element, 'type': 'COMMENT'}); // Комментарии
             normal_answer.push({element: element, type: 'COMMENT'});
-        } else if (test(element) && answer[element] === undefined) {
+        } else if (isValidIdentifier(element) && answer[element] === undefined) {
             answer.push({'element': element, 'type': 'IDENTIFICATOR'});
             normal_answer.push({element: element, type: 'IDENTIFICATOR'});
         } else if (answer[element] === undefined) {
@@ -91,7 +95,7 @@ function analyze(listOfElements) {
         }
     }
 
-    return answer;
+    return [answer, normal_answer];
 }
 
 module.exports = analyze;
