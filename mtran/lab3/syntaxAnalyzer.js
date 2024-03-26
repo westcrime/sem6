@@ -1,11 +1,16 @@
 function analyze(tokens) {
     let current = 0;
 
-    function walk() {
+    function walk(topLevelExpression = false) {
         let token = tokens[current];
 
+        if (topLevelExpression) {
+            if (token.type !== 'LEFT_BRACKET') {
+                throw new Error(`Syntax Error. Line number: ${token.lineNumber}. Token Index: ${token.tokenIndex}. Expected (`);
+            }
+        }
+
         if (token.type === 'LEFT_BRACKET') {
-            // Переходим к следующему токену, который должен быть функцией или оператором
             token = tokens[++current];
 
             const node = {
@@ -14,16 +19,13 @@ function analyze(tokens) {
                 params: []
             };
 
-            // Переходим к следующему токену после имени функции
             token = tokens[++current];
 
-            // Пока не встретим RIGHT_BRACKET, собираем параметры функции
             while (token.type !== 'RIGHT_BRACKET') {
                 node.params.push(walk());
                 token = tokens[current];
             }
 
-            // Пропускаем закрывающую скобку
             current++;
             return node;
         }
@@ -52,7 +54,7 @@ function analyze(tokens) {
             };
         }
 
-        throw new Error(`Unknown token type: ${token.type}`);
+        throw new Error(`Syntax Error. Line number: ${token.lineNumber}. Token Index: ${token.tokenIndex}. Unknown token type: ${token.type}`);
     }
 
     const ast = {
@@ -61,7 +63,7 @@ function analyze(tokens) {
     };
 
     while (current < tokens.length) {
-        ast.body.push(walk());
+        ast.body.push(walk(true));
     }
 
     return ast;

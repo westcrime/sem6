@@ -55,43 +55,45 @@ function analyze(data) {
         '>': 'OPERATOR',
     };
     for (element of listOfElements) {
-        element = element.replace(/[\r\n]/g, '');
+        elementLineNumber = element.lineNumber;
+        elementTokenIndex = element.tokenIndex;
+        element = element.element.replace(/[\r\n]/g, '');
         if (element === '') continue;
         if (categoryMappings[element]) {
             answer.push({'element': element, 'type': categoryMappings[element]});
-            normal_answer.push({element: element, type: element, type: categoryMappings[element]});
+            normal_answer.push({element: element, type: categoryMappings[element], 'lineNumber': elementLineNumber, 'tokenIndex': elementTokenIndex});
         } else if (!isNaN(Number(element))) {
             answer.push({'element': element, 'type': 'LITERAL_NUMBER'});
-            normal_answer.push({element: element, type: 'LITERAL_NUMBER'});
+            normal_answer.push({element: element, type: 'LITERAL_NUMBER', 'lineNumber': elementLineNumber, 'tokenIndex': elementTokenIndex});
         } else if ((element[0] === '\'' || element[0] === '"') && (element[element.length - 1] === '\'' || element[element.length - 1] === '"')) {
             answer.push({'element': element, 'type': 'LITERAL_STRING'});
-            normal_answer.push({element: element, type: 'LITERAL_STRING'});
+            normal_answer.push({element: element, type: 'LITERAL_STRING', 'lineNumber': elementLineNumber, 'tokenIndex': elementTokenIndex});
         } else if (element[0] === ':') {
             answer.push({'element': element, 'type': 'CONSTANT'}); // Символы, начинающиеся с двоеточия
-            normal_answer.push({element: element, type: 'CONSTANT'});
+            normal_answer.push({element: element, type: 'CONSTANT', 'lineNumber': elementLineNumber, 'tokenIndex': elementTokenIndex});
         } else if (element.startsWith('macro')) {
             answer.push({'element': element, 'type': 'MACRO'}); // Макросы
-            normal_answer.push({element: element, type: 'MACRO'});
+            normal_answer.push({element: element, type: 'MACRO', 'lineNumber': elementLineNumber, 'tokenIndex': elementTokenIndex});
         } else if (element.startsWith(';')) {
             answer.push({'element': element, 'type': 'COMMENT'}); // Комментарии
-            normal_answer.push({element: element, type: 'COMMENT'});
+            normal_answer.push({element: element, type: 'COMMENT', 'lineNumber': elementLineNumber, 'tokenIndex': elementTokenIndex});
         } else if (isValidIdentifier(element) && answer[element] === undefined) {
             answer.push({'element': element, 'type': 'IDENTIFICATOR'});
-            normal_answer.push({element: element, type: 'IDENTIFICATOR'});
+            normal_answer.push({element: element, type: 'IDENTIFICATOR', 'lineNumber': elementLineNumber, 'tokenIndex': elementTokenIndex});
         } else if (answer[element] === undefined) {
             if (element.includes('\'') || element.includes("\"")) {
-                throw Error("Syntax Error: Wrong Literal String Format: " + element);   
+                throw Error("Syntax Error: Wrong Literal String Format. Line number: " + elementLineNumber + ". Token index: " + elementTokenIndex + "\n " + element);   
             }
             if (element.includes('#')) {
-                throw Error("Syntax Error: Wrong Boolean Format: " + element);   
+                throw Error("Syntax Error: Wrong Boolean Format. Line number: " + elementLineNumber + ". Token index: " + elementTokenIndex + "\n " + element);   
             }
             if (element.includes('\\') || element.includes('/')) {
-                throw Error("Syntax Error: Wrong Variable Name Format: " + element);   
+                throw Error("Syntax Error: Wrong Variable Name Format. Line number: " + elementLineNumber + ". Token index: " + elementTokenIndex + "\n " + element);   
             }
             if (!((element[0] >= 'a' && element[0] <= 'z') || (element[0] >= 'A' && element[0] <= 'Z'))) {
-                throw Error("Syntax Error: Wrong Number Format: " + element);  
+                throw Error("Syntax Error: Wrong Number Format. Line number: " + elementLineNumber + ". Token index: " + elementTokenIndex + "\n " + element);  
             }
-            throw Error("Syntax Error: " + element);
+            throw Error("Syntax Error. Line number: " + elementLineNumber + ". Token index: " + elementTokenIndex + "\n " + element);
         }
     }
 

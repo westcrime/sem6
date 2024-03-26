@@ -57,6 +57,8 @@ function splitIgnoringQuotes(str, delimiter) {
     let elements = [];
     let currentElement = '';
     let insideQuotes = false;
+    let lineNumber = 1;
+    let tokenIndex = 1;
 
     for (let i = 0; i < str.length; i++) {
         const char = str[i];
@@ -64,15 +66,21 @@ function splitIgnoringQuotes(str, delimiter) {
             insideQuotes = !insideQuotes;
         }
 
-        if ((char === delimiter || char === '\n') && !insideQuotes) {
-            elements.push(currentElement);
+        if (char === '\n' && !insideQuotes) {
+            elements.push({'element': currentElement, 'lineNumber': lineNumber, 'tokenIndex': tokenIndex});
             currentElement = '';
+            lineNumber++;
+            tokenIndex = 1;
+        } else if (char === delimiter && !insideQuotes) {
+            elements.push({'element': currentElement, 'lineNumber': lineNumber, 'tokenIndex': tokenIndex});
+            currentElement = '';
+            tokenIndex++;
         } else {
             currentElement += char;
         }
     }
 
-    elements.push(currentElement); // Добавляем последний элемент
+    elements.push({'element': currentElement, 'lineNumber': lineNumber, 'tokenIndex': tokenIndex});
     return elements;
 }
 
