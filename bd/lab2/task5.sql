@@ -5,40 +5,45 @@ AS
 BEGIN
     EXECUTE IMMEDIATE 'ALTER TRIGGER check_students_id_unique DISABLE';
     EXECUTE IMMEDIATE 'ALTER TRIGGER check_students_name_unique DISABLE';
+    EXECUTE IMMEDIATE 'ALTER TRIGGER students_audit DISABLE';
+    EXECUTE IMMEDIATE 'ALTER TRIGGER students_fk DISABLE';
+    EXECUTE IMMEDIATE 'ALTER TRIGGER students_group_id_foreign_key_trigger DISABLE';
+    EXECUTE IMMEDIATE 'ALTER TRIGGER update_groups_cval DISABLE';
     
-    DELETE FROM STUDENTS;
-    
-    FOR v_log IN (SELECT * FROM STUDENTS_LOG WHERE LOG_DATE <= p_date ORDER BY LOG_DATE ASC) LOOP
-        IF v_log.OPERATION = 'INSERT' THEN
-            INSERT INTO STUDENTS (ID, NAME, GROUP_ID)
-            VALUES (v_log.STUDENT_ID, v_log.NAME, v_log.GROUP_ID);
+    -- Откатываем изменения после указанной даты
+    FOR v_log IN (SELECT * FROM STUDENTS_LOG WHERE LOG_DATE > p_date ORDER BY LOG_DATE DESC) LOOP
+        IF v_log.OPERATION = 'DELETE' THEN
+        -- Вставляем запись обратно, так как она была удалена после p_date
+        INSERT INTO STUDENTS (ID, NAME, GROUP_ID)
+        VALUES (v_log.STUDENT_ID, v_log.NEW_NAME, v_log.NEW_GROUP_ID);
+        ELSIF v_log.OPERATION = 'INSERT' THEN
+        -- Удаляем запись, так как она была вставлена после p_date
+        DELETE FROM STUDENTS WHERE ID = v_log.STUDENT_ID;
         ELSIF v_log.OPERATION = 'UPDATE' THEN
-            DECLARE
-                v_count NUMBER;
-            BEGIN
-                SELECT COUNT(*) INTO v_count FROM STUDENTS WHERE ID = v_log.STUDENT_ID;
-                IF v_count > 0 THEN
-                    UPDATE STUDENTS
-                    SET NAME = v_log.NAME,
-                        GROUP_ID = v_log.GROUP_ID
-                    WHERE ID = v_log.STUDENT_ID;
-                ELSE
-                    INSERT INTO STUDENTS (ID, NAME, GROUP_ID)
-                    VALUES (v_log.STUDENT_ID, v_log.NAME, v_log.GROUP_ID);
-                END IF;
-            END;
-        ELSIF v_log.OPERATION = 'DELETE' THEN
-            NULL;
+        -- Возвращаем старые значения, так как запись была обновлена после p_date
+        UPDATE STUDENTS
+        SET NAME = v_log.OLD_NAME,
+            GROUP_ID = v_log.OLD_GROUP_ID
+        WHERE ID = v_log.STUDENT_ID;
         END IF;
+        DELETE FROM STUDENTS_LOG WHERE LOG_ID = v_log.LOG_ID;
     END LOOP;
     
+    EXECUTE IMMEDIATE 'ALTER TRIGGER students_audit ENABLE';
     EXECUTE IMMEDIATE 'ALTER TRIGGER check_students_id_unique ENABLE';
     EXECUTE IMMEDIATE 'ALTER TRIGGER check_students_name_unique ENABLE';
+    EXECUTE IMMEDIATE 'ALTER TRIGGER students_fk ENABLE';
+    EXECUTE IMMEDIATE 'ALTER TRIGGER students_group_id_foreign_key_trigger ENABLE';
+    EXECUTE IMMEDIATE 'ALTER TRIGGER update_groups_cval ENABLE';
     
 EXCEPTION
     WHEN OTHERS THEN
+        EXECUTE IMMEDIATE 'ALTER TRIGGER students_audit ENABLE';
         EXECUTE IMMEDIATE 'ALTER TRIGGER check_students_id_unique ENABLE';
         EXECUTE IMMEDIATE 'ALTER TRIGGER check_students_name_unique ENABLE';
+        EXECUTE IMMEDIATE 'ALTER TRIGGER students_fk ENABLE';
+        EXECUTE IMMEDIATE 'ALTER TRIGGER students_group_id_foreign_key_trigger ENABLE';
+        EXECUTE IMMEDIATE 'ALTER TRIGGER update_groups_cval ENABLE';
         RAISE;
 END;
 /
