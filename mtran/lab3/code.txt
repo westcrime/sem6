@@ -4,7 +4,7 @@
       (+ (car lst) (sum-list (cdr lst)))))
 
 (define x (list 1.2 2 3 4))
-jj
+
 (if (list? x)
     (display (sum-list x))
     (display "variable x is not list"))
