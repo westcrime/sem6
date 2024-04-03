@@ -15,8 +15,36 @@ void handler(int sig) {
 }
 
 int main() {
+    int number;
+    FILE *file;
+
+    file = fopen("buffer.txt", "r");
+    if (file == NULL) {
+        printf("Error while opening file.\n");
+        return 1;
+    }
+
+    if (!(fscanf(file, "%d", &number) == 1)) {
+        printf("Can't read number from file.\n");
+    }
+
+    fclose(file);
+
     signal(SIGTERM, handler);
-    for (int i = 0; i < NUMBER_OF_ITERATIONS; i++) {
+    
+    for (int i = number; i < NUMBER_OF_ITERATIONS + 1; i++) {
+        file = fopen("buffer.txt", "w");
+        if (file == NULL) {
+            printf("Error while opening file.\n");
+            return 1;
+        }
+        if (i == NUMBER_OF_ITERATIONS) {
+            fprintf(file, "%d", 0);
+            fclose(file);
+            continue;
+        }
+        fprintf(file, "%d", i);
+        fclose(file);
         printf("Process %d: %d\n", getpid(), i);
         sleep(1);
     }
