@@ -49,14 +49,14 @@ client.connect({ port: SERVER_PORT, host: 'localhost' }, async () => {
     console.log(packet, '\n');
     packet.send(client);
     // SYN Flooding (клиентская часть:)
-    while (true) {
-      while (true) {
-          console.log('[client] Sent to server:');
-          console.log(packet, '\n');
-          packet.send(client);
+    // while (true) {
+    //   while (true) {
+    //       console.log('[client] Sent to server:');
+    //       console.log(packet, '\n');
+    //       packet.send(client);
 
-        await promisify(setTimeout)(500);
-      }
+    //     await promisify(setTimeout)(500);
+    //   }
 
-    }
+    // }
 });

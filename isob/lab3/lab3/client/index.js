@@ -1,4 +1,4 @@
-const { Socket } = require('tcp')
+const { Socket } = require('../tcp/index')
 const fs = require('fs');
 
 const PORT = '../0001';
