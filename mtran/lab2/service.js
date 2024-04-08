@@ -62,7 +62,7 @@ function splitIgnoringQuotes(str, delimiter) {
 
     for (let i = 0; i < str.length; i++) {
         const char = str[i];
-        if (char === '"') {
+        if (char === '"' || char === '\'') {
             insideQuotes = !insideQuotes;
         }
 

@@ -1,4 +1,4 @@
-function analyze(tokens) {
+function buildSyntaxTree(tokens) {
     let current = 0;
 
     function walk(topLevelExpression = false) {
@@ -12,9 +12,20 @@ function analyze(tokens) {
 
         if (token.type === 'LEFT_BRACKET') {
             token = tokens[++current];
+            
+            let type = 'CallExpression';
+            if (token.type === 'SYS_FUNC') {
+                type = 'Sys_func';
+            } else if (token.type === 'OPERATOR') {
+                type = 'Operator';
+            } else if (token.type === 'KEYWORD') {
+                type = 'Keyword';
+            }
 
             const node = {
-                type: 'CallExpression',
+                lineNumber: token.lineNumber,
+                tokenIndex: token.tokenIndex,
+                type: type,
                 name: token.element,
                 params: []
             };
@@ -32,8 +43,16 @@ function analyze(tokens) {
 
         if (token.type === 'SYS_FUNC' || token.type === 'OPERATOR' || token.type === 'KEYWORD') {
             current++;
+            let type = 'Sys_func';
+            if (token.type === 'OPERATOR') {
+                type = 'Operator';
+            } else if (token.type === 'KEYWORD') {
+                type = 'Keyword';
+            }
             return {
-                type: 'Identifier',
+                lineNumber: token.lineNumber,
+                tokenIndex: token.tokenIndex,
+                type: type,
                 name: token.element
             };
         }
@@ -41,6 +60,8 @@ function analyze(tokens) {
         if (token.type === 'IDENTIFICATOR') {
             current++;
             return {
+                lineNumber: token.lineNumber,
+                tokenIndex: token.tokenIndex,
                 type: 'Variable',
                 name: token.element
             };
@@ -49,6 +70,8 @@ function analyze(tokens) {
         if (token.type === 'LITERAL_NUMBER' || token.type === 'LITERAL_STRING' || token.type === 'CONSTANT') {
             current++;
             return {
+                lineNumber: token.lineNumber,
+                tokenIndex: token.tokenIndex,
                 type: 'Literal',
                 value: token.element
             };
@@ -69,5 +92,5 @@ function analyze(tokens) {
     return ast;
   }
   
-  module.exports = analyze;
+  module.exports = buildSyntaxTree;
   
