@@ -44,7 +44,7 @@
 						{
 							"lineNumber": 3,
 							"tokenIndex": 7,
-							"type": "Literal",
+							"type": "Literal number",
 							"value": "0"
 						},
 						{
@@ -116,25 +116,25 @@
 						{
 							"lineNumber": 6,
 							"tokenIndex": 7,
-							"type": "Literal",
+							"type": "Literal number",
 							"value": "1.2"
 						},
 						{
 							"lineNumber": 6,
 							"tokenIndex": 8,
-							"type": "Literal",
+							"type": "Literal number",
 							"value": "2"
 						},
 						{
 							"lineNumber": 6,
 							"tokenIndex": 9,
-							"type": "Literal",
+							"type": "Literal number",
 							"value": "3"
 						},
 						{
 							"lineNumber": 6,
 							"tokenIndex": 10,
-							"type": "Literal",
+							"type": "Literal number",
 							"value": "4"
 						}
 					]
@@ -192,7 +192,7 @@
 						{
 							"lineNumber": 10,
 							"tokenIndex": 7,
-							"type": "Literal",
+							"type": "Literal string",
 							"value": "\"variable x is not list\""
 						}
 					]
@@ -212,7 +212,7 @@
 						{
 							"lineNumber": 11,
 							"tokenIndex": 8,
-							"type": "Literal",
+							"type": "Literal string",
 							"value": "'Hello world!'"
 						}
 					]
@@ -232,7 +232,7 @@
 						{
 							"lineNumber": 12,
 							"tokenIndex": 8,
-							"type": "Literal",
+							"type": "Literal number",
 							"value": "2"
 						}
 					]
@@ -259,7 +259,7 @@
 				{
 					"lineNumber": 14,
 					"tokenIndex": 4,
-					"type": "Literal",
+					"type": "Literal boolean",
 					"value": "#f"
 				},
 				{
@@ -271,7 +271,7 @@
 						{
 							"lineNumber": 15,
 							"tokenIndex": 7,
-							"type": "Literal",
+							"type": "Literal string",
 							"value": "\"Impossible\""
 						}
 					]
@@ -285,7 +285,7 @@
 						{
 							"lineNumber": 16,
 							"tokenIndex": 7,
-							"type": "Literal",
+							"type": "Literal string",
 							"value": "\"fdsfsd\""
 						}
 					]
@@ -307,7 +307,7 @@
 				{
 					"lineNumber": 18,
 					"tokenIndex": 5,
-					"type": "Literal",
+					"type": "Literal string",
 					"value": "'symbol'"
 				}
 			]
@@ -321,13 +321,13 @@
 				{
 					"lineNumber": 19,
 					"tokenIndex": 4,
-					"type": "Literal",
+					"type": "Literal number",
 					"value": "+1"
 				},
 				{
 					"lineNumber": 19,
 					"tokenIndex": 5,
-					"type": "Literal",
+					"type": "Literal number",
 					"value": "-2"
 				}
 			]
@@ -347,13 +347,13 @@
 						{
 							"lineNumber": 20,
 							"tokenIndex": 6,
-							"type": "Literal",
+							"type": "Literal number",
 							"value": "2"
 						},
 						{
 							"lineNumber": 20,
 							"tokenIndex": 7,
-							"type": "Literal",
+							"type": "Literal number",
 							"value": "3"
 						}
 					]
@@ -375,7 +375,7 @@
 				{
 					"lineNumber": 21,
 					"tokenIndex": 5,
-					"type": "Literal",
+					"type": "Literal number",
 					"value": "6"
 				}
 			]
@@ -407,14 +407,14 @@
 								{
 									"lineNumber": 22,
 									"tokenIndex": 9,
-									"type": "Literal",
+									"type": "Literal number",
 									"value": "+1"
 								},
 								{
 									"lineNumber": 22,
 									"tokenIndex": 10,
-									"type": "Literal",
-									"value": "-2"
+									"type": "Literal number",
+									"value": "22"
 								}
 							]
 						},
@@ -422,7 +422,7 @@
 							"lineNumber": 22,
 							"tokenIndex": 12,
 							"type": "Variable",
-							"name": "x"
+							"name": "firstNumber"
 						}
 					]
 				}

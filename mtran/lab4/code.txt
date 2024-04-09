@@ -19,4 +19,4 @@
 (+ +1 -2)
 (if (< 2 3))
 (define firstNumber 6)
-(define someNumber (+ (+ +1 -2) x))
+(define someNumber (+ (+ +1 '2') firstNumber))

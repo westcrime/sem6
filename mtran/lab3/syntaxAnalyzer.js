@@ -69,10 +69,18 @@ function buildSyntaxTree(tokens) {
 
         if (token.type === 'LITERAL_NUMBER' || token.type === 'LITERAL_STRING' || token.type === 'CONSTANT') {
             current++;
+            let type = 'Literal number';
+            if (token.type === 'LITERAL_STRING') {
+                type = 'Literal string';
+            } else if (token.type === 'LITERAL_NUMBER') {
+                type = 'Literal number';
+            } else if (token.type === 'CONSTANT') {
+                type = 'Literal boolean';
+            }
             return {
                 lineNumber: token.lineNumber,
                 tokenIndex: token.tokenIndex,
-                type: 'Literal',
+                type: type,
                 value: token.element
             };
         }

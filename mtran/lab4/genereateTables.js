@@ -1,5 +1,7 @@
-const findFirstVariable = require('./services/findFirstVariable')
-const findFirstLiteral = require('./services/findFirstLiteral')
+const findFirstVariable = require('./services/findFirstVariable');
+const findFirstLiteral = require('./services/findFirstLiteral');
+const checkLiteralTypes = require('./services/checkLiteralTypes');
+const checkVariablesScopeAndType = require('./services/checkVariablesScopeAndType');
 
 function generateTables(node) {
     let stackOfTables = [];
@@ -37,6 +39,10 @@ function generateTables(node) {
                 variable.type = 'Function';
                 variable.numberOfArgs = node.params[0].params.length;
             } else if (node.params[1].type === 'Operator') {
+                if (!checkLiteralTypes(node.params[1])) {
+                    throw new Error(`Line number: ${node.lineNumber}. Token Index: ${node.tokenIndex}. Different types of literals!`)
+                }
+                checkVariablesScopeAndType(node.params[1], stackOfTables);
                 let variableOrNull = findFirstVariable(node.params[1]);
                 if (variableOrNull !== null) {
                     let index = stackOfTables.length - 1;
