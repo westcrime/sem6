@@ -1,0 +1,10 @@
+client
+client.c
+client.o
+hello
+makefile
+output.txt
+script.txt
+server
+server.c
+server.o

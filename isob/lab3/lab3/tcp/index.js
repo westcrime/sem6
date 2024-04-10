@@ -139,8 +139,6 @@ class Socket {
             input: stream
         });
         
-        //const KACTblL = fs.createWriteStream(this.from_port);
-        
         rl.on('line', (line) => {
             let msg = JSON.parse(line);
             this.process_message(msg);

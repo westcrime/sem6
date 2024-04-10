@@ -1,0 +1,15 @@
+drop table dev.test7;
+drop table dev.test6;
+drop table dev.test5;
+drop table dev.test4;
+drop table dev.test3;
+drop table dev.test2;
+drop table dev.test1;
+drop table prod.test7;
+drop table prod.test6;
+drop table prod.test5;
+drop table prod.test4;
+drop table prod.test3;
+drop table prod.test2;
+drop table prod.test1;
+drop function prod.func3;
