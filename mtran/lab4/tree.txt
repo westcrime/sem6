@@ -4,7 +4,7 @@
 		{
 			"lineNumber": 1,
 			"tokenIndex": 2,
-			"type": "CallExpression",
+			"type": "Sys_func",
 			"name": "define",
 			"params": [
 				{
@@ -24,13 +24,13 @@
 				{
 					"lineNumber": 2,
 					"tokenIndex": 6,
-					"type": "CallExpression",
+					"type": "Sys_func",
 					"name": "if",
 					"params": [
 						{
 							"lineNumber": 2,
 							"tokenIndex": 8,
-							"type": "CallExpression",
+							"type": "Sys_func",
 							"name": "null?",
 							"params": [
 								{
@@ -44,19 +44,19 @@
 						{
 							"lineNumber": 3,
 							"tokenIndex": 7,
-							"type": "Literal",
+							"type": "Literal number",
 							"value": "0"
 						},
 						{
 							"lineNumber": 4,
 							"tokenIndex": 8,
-							"type": "CallExpression",
+							"type": "Operator",
 							"name": "+",
 							"params": [
 								{
 									"lineNumber": 4,
 									"tokenIndex": 10,
-									"type": "CallExpression",
+									"type": "Sys_func",
 									"name": "car",
 									"params": [
 										{
@@ -76,7 +76,7 @@
 										{
 											"lineNumber": 4,
 											"tokenIndex": 16,
-											"type": "CallExpression",
+											"type": "Sys_func",
 											"name": "cdr",
 											"params": [
 												{
@@ -98,7 +98,7 @@
 		{
 			"lineNumber": 6,
 			"tokenIndex": 3,
-			"type": "CallExpression",
+			"type": "Sys_func",
 			"name": "define",
 			"params": [
 				{
@@ -110,31 +110,31 @@
 				{
 					"lineNumber": 6,
 					"tokenIndex": 6,
-					"type": "CallExpression",
+					"type": "Sys_func",
 					"name": "list",
 					"params": [
 						{
 							"lineNumber": 6,
 							"tokenIndex": 7,
-							"type": "Literal",
+							"type": "Literal number",
 							"value": "1.2"
 						},
 						{
 							"lineNumber": 6,
 							"tokenIndex": 8,
-							"type": "Literal",
+							"type": "Literal number",
 							"value": "2"
 						},
 						{
 							"lineNumber": 6,
 							"tokenIndex": 9,
-							"type": "Literal",
+							"type": "Literal number",
 							"value": "3"
 						},
 						{
 							"lineNumber": 6,
 							"tokenIndex": 10,
-							"type": "Literal",
+							"type": "Literal number",
 							"value": "4"
 						}
 					]
@@ -144,13 +144,13 @@
 		{
 			"lineNumber": 8,
 			"tokenIndex": 3,
-			"type": "CallExpression",
+			"type": "Sys_func",
 			"name": "if",
 			"params": [
 				{
 					"lineNumber": 8,
 					"tokenIndex": 5,
-					"type": "CallExpression",
+					"type": "Sys_func",
 					"name": "list?",
 					"params": [
 						{
@@ -164,7 +164,7 @@
 				{
 					"lineNumber": 9,
 					"tokenIndex": 6,
-					"type": "CallExpression",
+					"type": "Sys_func",
 					"name": "display",
 					"params": [
 						{
@@ -186,13 +186,13 @@
 				{
 					"lineNumber": 10,
 					"tokenIndex": 6,
-					"type": "CallExpression",
+					"type": "Sys_func",
 					"name": "display",
 					"params": [
 						{
 							"lineNumber": 10,
 							"tokenIndex": 7,
-							"type": "Literal",
+							"type": "Literal string",
 							"value": "\"variable x is not list\""
 						}
 					]
@@ -200,7 +200,7 @@
 				{
 					"lineNumber": 11,
 					"tokenIndex": 6,
-					"type": "CallExpression",
+					"type": "Sys_func",
 					"name": "define",
 					"params": [
 						{
@@ -212,49 +212,80 @@
 						{
 							"lineNumber": 11,
 							"tokenIndex": 8,
-							"type": "Literal",
+							"type": "Literal string",
 							"value": "'Hello world!'"
 						}
 					]
+				},
+				{
+					"lineNumber": 12,
+					"tokenIndex": 6,
+					"type": "Sys_func",
+					"name": "define",
+					"params": [
+						{
+							"lineNumber": 12,
+							"tokenIndex": 7,
+							"type": "Variable",
+							"name": "errorNumber"
+						},
+						{
+							"lineNumber": 12,
+							"tokenIndex": 8,
+							"type": "Literal number",
+							"value": "2"
+						}
+					]
+				}
+			],
+			"tableOfVariables": [
+				{
+					"name": "helloStr",
+					"type": "String"
+				},
+				{
+					"name": "errorNumber",
+					"type": "Number",
+					"value": "2"
 				}
 			]
 		},
 		{
-			"lineNumber": 13,
+			"lineNumber": 14,
 			"tokenIndex": 3,
-			"type": "CallExpression",
+			"type": "Sys_func",
 			"name": "if",
 			"params": [
 				{
-					"lineNumber": 13,
-					"tokenIndex": 4,
-					"type": "Literal",
-					"value": "#f"
-				},
-				{
 					"lineNumber": 14,
-					"tokenIndex": 6,
-					"type": "CallExpression",
-					"name": "display",
-					"params": [
-						{
-							"lineNumber": 14,
-							"tokenIndex": 7,
-							"type": "Literal",
-							"value": "\"Impossible\""
-						}
-					]
+					"tokenIndex": 4,
+					"type": "Literal boolean",
+					"value": "#f"
 				},
 				{
 					"lineNumber": 15,
 					"tokenIndex": 6,
-					"type": "CallExpression",
+					"type": "Sys_func",
 					"name": "display",
 					"params": [
 						{
 							"lineNumber": 15,
 							"tokenIndex": 7,
-							"type": "Literal",
+							"type": "Literal string",
+							"value": "\"Impossible\""
+						}
+					]
+				},
+				{
+					"lineNumber": 16,
+					"tokenIndex": 6,
+					"type": "Sys_func",
+					"name": "display",
+					"params": [
+						{
+							"lineNumber": 16,
+							"tokenIndex": 7,
+							"type": "Literal string",
 							"value": "\"fdsfsd\""
 						}
 					]
@@ -262,67 +293,67 @@
 			]
 		},
 		{
-			"lineNumber": 17,
+			"lineNumber": 18,
 			"tokenIndex": 3,
-			"type": "CallExpression",
+			"type": "Sys_func",
 			"name": "define",
 			"params": [
 				{
-					"lineNumber": 17,
+					"lineNumber": 18,
 					"tokenIndex": 4,
 					"type": "Variable",
 					"name": "str"
 				},
 				{
-					"lineNumber": 17,
+					"lineNumber": 18,
 					"tokenIndex": 5,
-					"type": "Literal",
+					"type": "Literal string",
 					"value": "'symbol'"
-				}
-			]
-		},
-		{
-			"lineNumber": 18,
-			"tokenIndex": 3,
-			"type": "CallExpression",
-			"name": "+",
-			"params": [
-				{
-					"lineNumber": 18,
-					"tokenIndex": 4,
-					"type": "Literal",
-					"value": "+1"
-				},
-				{
-					"lineNumber": 18,
-					"tokenIndex": 5,
-					"type": "Literal",
-					"value": "-2"
 				}
 			]
 		},
 		{
 			"lineNumber": 19,
 			"tokenIndex": 3,
-			"type": "CallExpression",
-			"name": "if",
+			"type": "Operator",
+			"name": "+",
 			"params": [
 				{
 					"lineNumber": 19,
+					"tokenIndex": 4,
+					"type": "Literal number",
+					"value": "+1"
+				},
+				{
+					"lineNumber": 19,
 					"tokenIndex": 5,
-					"type": "CallExpression",
+					"type": "Literal number",
+					"value": "-2"
+				}
+			]
+		},
+		{
+			"lineNumber": 20,
+			"tokenIndex": 3,
+			"type": "Sys_func",
+			"name": "if",
+			"params": [
+				{
+					"lineNumber": 20,
+					"tokenIndex": 5,
+					"type": "Operator",
 					"name": "<",
 					"params": [
 						{
-							"lineNumber": 19,
+							"lineNumber": 20,
 							"tokenIndex": 6,
-							"type": "Literal",
+							"type": "Literal number",
 							"value": "2"
 						},
 						{
-							"lineNumber": 19,
+							"lineNumber": 20,
 							"tokenIndex": 7,
-							"type": "Literal",
+							"type": "Literal number",
 							"value": "3"
 						}
 					]
@@ -330,22 +361,70 @@
 			]
 		},
 		{
-			"lineNumber": 20,
+			"lineNumber": 21,
 			"tokenIndex": 3,
-			"type": "CallExpression",
+			"type": "Sys_func",
 			"name": "define",
 			"params": [
 				{
-					"lineNumber": 20,
+					"lineNumber": 21,
+					"tokenIndex": 4,
+					"type": "Variable",
+					"name": "firstNumber"
+				},
+				{
+					"lineNumber": 21,
+					"tokenIndex": 5,
+					"type": "Literal number",
+					"value": "6"
+				}
+			]
+		},
+		{
+			"lineNumber": 22,
+			"tokenIndex": 3,
+			"type": "Sys_func",
+			"name": "define",
+			"params": [
+				{
+					"lineNumber": 22,
 					"tokenIndex": 4,
 					"type": "Variable",
 					"name": "someNumber"
 				},
 				{
-					"lineNumber": 20,
-					"tokenIndex": 5,
-					"type": "Literal",
-					"value": "-3.5"
+					"lineNumber": 22,
+					"tokenIndex": 6,
+					"type": "Operator",
+					"name": "+",
+					"params": [
+						{
+							"lineNumber": 22,
+							"tokenIndex": 8,
+							"type": "Operator",
+							"name": "+",
+							"params": [
+								{
+									"lineNumber": 22,
+									"tokenIndex": 9,
+									"type": "Literal number",
+									"value": "+1"
+								},
+								{
+									"lineNumber": 22,
+									"tokenIndex": 10,
+									"type": "Literal number",
+									"value": "22"
+								}
+							]
+						},
+						{
+							"lineNumber": 22,
+							"tokenIndex": 12,
+							"type": "Variable",
+							"name": "firstNumber"
+						}
+					]
 				}
 			]
 		}

@@ -1,7 +1,7 @@
 const test = require('./service');
 const {isValidIdentifier, spaceText, splitIgnoringQuotes} = require('./service')
 
-function analyze(data) {
+function tokenize(data) {
     const spacedText = spaceText(data);
     let listOfElements = splitIgnoringQuotes(spacedText, ' ');
 
@@ -100,5 +100,5 @@ function analyze(data) {
     return [answer, normal_answer];
 }
 
-module.exports = analyze;
+module.exports = tokenize;
 

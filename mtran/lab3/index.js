@@ -1,5 +1,5 @@
 const tokenize = require('../lab2/analyzer');
-const analyze = require('./syntaxAnalyzer');
+const buildSyntaxTree = require('./syntaxAnalyzer');
 const fs = require('fs');
 
 fs.readFile('code.txt', 'utf8', (err, data) => {
@@ -8,10 +8,10 @@ fs.readFile('code.txt', 'utf8', (err, data) => {
     return;
   }
   let [answer, normalAnswer] = tokenize(data);
-  const ast = analyze(normalAnswer);
-  const formattedAst = printAst(ast);
+  const ast = buildSyntaxTree(normalAnswer);
+  //const formattedAst = printAst(ast);
 
-  fs.writeFile('tree.txt', formattedAst, function(error){
+  fs.writeFile('tree.txt', JSON.stringify(ast, null, '\t'), function(error){
     if(error){
       return console.log(error);
     }

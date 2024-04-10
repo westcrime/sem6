@@ -8,7 +8,8 @@
 (if (list? x)
     (display (sum-list x))
     (display "variable x is not list")
-    (define helloStr 'Hello world!'))
+    (define helloStr 'Hello world!')
+    (define errorNumber 2))
 
 (if #f
     (display "Impossible")
@@ -17,4 +18,5 @@
 (define str 'symbol')
 (+ +1 -2)
 (if (< 2 3))
-(define someNumber -3.5)
+(define firstNumber 6)
+(define someNumber (+ (+ +1 '2') firstNumber))
