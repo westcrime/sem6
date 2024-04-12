@@ -2,6 +2,8 @@ const findFirstVariable = require('./services/findFirstVariable');
 const findFirstLiteral = require('./services/findFirstLiteral');
 const checkLiteralTypes = require('./services/checkLiteralTypes');
 const checkVariablesScopeAndType = require('./services/checkVariablesScopeAndType');
+const checkNumberOfArgs = require('./services/checkNumberOfArgs');
+const checkVariableScope = require('./services/checkVariableScope');
 
 function generateTables(node) {
     let stackOfTables = [];
@@ -11,6 +13,28 @@ function generateTables(node) {
             main(node.body);
         }
         if (node.name !== 'define') {
+            if (node.type === 'CallExpression') {
+                let variableFound = null;
+                for (let scopeIndex = stackOfTables.length - 1; scopeIndex >= 0; scopeIndex--) {
+                    const scope = stackOfTables[scopeIndex];
+                    for (const variable of scope) {
+                        if (variable.name === node.name) {
+                            variableFound = true;
+                            break;
+                        }
+                    }
+                    if (variableFound) {
+                        checkNumberOfArgs(node, stackOfTables);
+                    }
+                }
+            }
+            if (node.type === 'Operator') {
+                if (!checkLiteralTypes(node.params[1])) {
+                    throw new Error(`Line number: ${node.lineNumber}. Token Index: ${node.tokenIndex}. Different types of literals!`)
+                }
+                checkVariablesScopeAndType(node.params[1], stackOfTables);
+                checkVariableScope(node, stackOfTables);
+            }
             if (node.body !== undefined) {
                 for (let expr of node.body) {
                     main(expr);
@@ -18,8 +42,7 @@ function generateTables(node) {
             }
             if (node.params === undefined) {
                 return;
-            }
-            if (Array.isArray(node.params)) {
+            } else if (Array.isArray(node.params)) {
                 for (let param of node.params) {      
                     main(param);
                 }
@@ -38,6 +61,9 @@ function generateTables(node) {
             if (node.params[0].type === 'CallExpression') {
                 variable.type = 'Function';
                 variable.numberOfArgs = node.params[0].params.length;
+                for (let param of node.params[0].params) {
+                    stackOfTables[stackOfTables.length - 2].push({name: param.name, type: 'Any'});
+                }
             } else if (node.params[1].type === 'Operator') {
                 if (!checkLiteralTypes(node.params[1])) {
                     throw new Error(`Line number: ${node.lineNumber}. Token Index: ${node.tokenIndex}. Different types of literals!`)
@@ -81,6 +107,7 @@ function generateTables(node) {
                 variable.type = 'String';
             }
             stackOfTables[stackOfTables.length - 2].push(variable);
+            main(node.params[1]);
         }
         if (stackOfTables.length !== 0) {
             if (stackOfTables[stackOfTables.length - 1].length !== 0) {

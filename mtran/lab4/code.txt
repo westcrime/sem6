@@ -1,12 +1,12 @@
-(define (sum-list lst)
+(define (sum-list lst lst2)
     (if (null? lst)
       0
-      (+ (car lst) (sum-list (cdr lst)))))
+      (+ (car lst) (sum-list lst lst2))))
 
 (define x (list 1.2 2 3 4))
 
 (if (list? x)
-    (display (sum-list x))
+    (display (sum-list x x))
     (display "variable x is not list")
     (define helloStr 'Hello world!')
     (define errorNumber 2))
@@ -19,4 +19,4 @@
 (+ +1 -2)
 (if (< 2 3))
 (define firstNumber 6)
-(define someNumber (+ (+ +1 '2') firstNumber))
+(define someNumber (+ (+ +1 2) (sum-list x 2)))

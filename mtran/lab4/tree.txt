@@ -18,6 +18,12 @@
 							"tokenIndex": 5,
 							"type": "Variable",
 							"name": "lst"
+						},
+						{
+							"lineNumber": 1,
+							"tokenIndex": 6,
+							"type": "Variable",
+							"name": "lst2"
 						}
 					]
 				},
@@ -75,17 +81,15 @@
 									"params": [
 										{
 											"lineNumber": 4,
+											"tokenIndex": 15,
+											"type": "Variable",
+											"name": "lst"
+										},
+										{
+											"lineNumber": 4,
 											"tokenIndex": 16,
-											"type": "Sys_func",
-											"name": "cdr",
-											"params": [
-												{
-													"lineNumber": 4,
-													"tokenIndex": 17,
-													"type": "Variable",
-													"name": "lst"
-												}
-											]
+											"type": "Variable",
+											"name": "lst2"
 										}
 									]
 								}
@@ -178,6 +182,12 @@
 									"tokenIndex": 9,
 									"type": "Variable",
 									"name": "x"
+								},
+								{
+									"lineNumber": 9,
+									"tokenIndex": 10,
+									"type": "Variable",
+									"name": "x"
 								}
 							]
 						}
@@ -236,17 +246,6 @@
 							"value": "2"
 						}
 					]
-				}
-			],
-			"tableOfVariables": [
-				{
-					"name": "helloStr",
-					"type": "String"
-				},
-				{
-					"name": "errorNumber",
-					"type": "Number",
-					"value": "2"
 				}
 			]
 		},
@@ -414,15 +413,29 @@
 									"lineNumber": 22,
 									"tokenIndex": 10,
 									"type": "Literal number",
-									"value": "22"
+									"value": "2"
 								}
 							]
 						},
 						{
 							"lineNumber": 22,
-							"tokenIndex": 12,
-							"type": "Variable",
-							"name": "firstNumber"
+							"tokenIndex": 13,
+							"type": "CallExpression",
+							"name": "sum-list",
+							"params": [
+								{
+									"lineNumber": 22,
+									"tokenIndex": 14,
+									"type": "Variable",
+									"name": "x"
+								},
+								{
+									"lineNumber": 22,
+									"tokenIndex": 15,
+									"type": "Literal number",
+									"value": "2"
+								}
+							]
 						}
 					]
 				}

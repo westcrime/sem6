@@ -2,8 +2,9 @@ function checkVariablesScopeAndType(node, stackOfScopes) {
   if (node.type === 'Operator') {
     let expectedType = checkVariablesScopeAndType(node.params[0], stackOfScopes);
     for (let param of node.params) {
-      if (checkVariablesScopeAndType(param, stackOfScopes) !== expectedType) {
-        throw new Error(`Line number: ${param.lineNumber}. Token Index: ${param.tokenIndex}. Different types of literals!`);
+      let result = checkVariablesScopeAndType(param, stackOfScopes);
+      if (expectedType !== (result === 'Any'? expectedType : result)) {
+        throw new Error(`Line number: ${param.lineNumber}. Token Index: ${param.tokenIndex}. Different types of literals: ${node.params[0].type.startsWith('Literal')? node.params[0].value : node.params[0].name} and ${param.type.startsWith('Literal')? param.value : param.name}.`);
       }
     }
     return expectedType;
@@ -33,6 +34,9 @@ function checkVariablesScopeAndType(node, stackOfScopes) {
     if (!variableFound) {
       throw new Error(`Line number: ${node.lineNumber}. Token Index: ${node.tokenIndex}. Undefined variable: ${node.name}!`);
     }
+  }
+  if (node.type === "CallExpression") {
+    return 'Any';
   }
 }
 
