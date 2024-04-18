@@ -34,6 +34,16 @@ const Login = (props) => {
             return
         }
 
+        if (sanitizedEmail.length > 20) {
+            setEmailError('The email is too long')
+            return
+        }
+
+        if (email !== sanitizedEmail) {
+            setEmailError('don\'t use dangerous symbols');
+            return
+        }
+
         if ((sanitizedEmail.indexOf('\'') || sanitizedEmail.indexOf('"')) !== -1) {
             console.log('dangerous symbols: ', sanitizedEmail.indexOf('\'') || sanitizedEmail.indexOf('"'))
             setEmailError('No dangerous symbols pls')
@@ -50,8 +60,18 @@ const Login = (props) => {
             return
         }
 
+        if (password !== sanitizedPassword) {
+            setPasswordError('don\'t use dangerous symbols');
+            return;
+        }
+
         if ((sanitizedPassword.search('\'') || sanitizedPassword.indexOf('"')) !== -1) {
             setPasswordError('No dangerous symbols pls')
+            return
+        }
+
+        if (sanitizedPassword.length > 20) {
+            setPasswordError('The password is too long')
             return
         }
 
@@ -64,7 +84,8 @@ const Login = (props) => {
             setAttemptCount(attemptCount + 1); // Увеличиваем счетчик попыток при неудачном входе
             setPasswordError(response.description);
             if (attemptCount >= 3) {
-                setPasswordError('Too many invalid attemts: 30 sec delay');
+                setPasswordError('Too many wrong attempts - 30 sec penalty');
+                document.getElementById('password').value = '';
                 setTimeout(() => {
                     setAttemptCount(0); // Сбросить счетчик попыток после таймаута
                 }, 30000); // 30 секунд блокировки
@@ -72,10 +93,12 @@ const Login = (props) => {
             return;
         } else {
             setAttemptCount(0); // Сбросить счетчик попыток при успешном входе
+            const responseCheckAccount = JSON.parse(ipcRenderer.sendSync('checkAccount', {email: sanitizedEmail}));
             console.log('Token received: ', response.token);
-            localStorage.setItem('user', JSON.stringify({ email: sanitizedEmail, token: response.token }));
+            localStorage.setItem('user', JSON.stringify({ email: sanitizedEmail, token: response.token, role: responseCheckAccount.user.role }));
             props.setLoggedIn(true);
             props.setEmail(sanitizedEmail);
+            props.setRole(responseCheckAccount.user.role);
             navigate('/');
         }
     }
@@ -99,12 +122,13 @@ const Login = (props) => {
             <div className={'inputContainer'}>
                 <input
                     type={"password"}
+                    id='password'
                     value={password}
                     placeholder="Enter your password here"
                     onChange={(ev) => setPassword(ev.target.value)}
                     className={'inputBox'}
                 />
-                <label className="errorLabel">{passwordError}</label>
+                <label className="errorLabel" id='passwordError'>{passwordError}</label>
             </div>
             <br />
             <div className={'inputContainer'}>

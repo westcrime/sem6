@@ -42,7 +42,7 @@ const createWindow = async () => {
 
 app.whenReady().then(async () => {
     await createWindow();
-    const jwtSecretKey = process.env.JWT_SECRET_KEY;
+    const jwtSecretKey = 'dsfdsfsdfdsvcsvdfgefg';
 
     admin.initializeApp({
         credential: admin.credential.cert(credentials)

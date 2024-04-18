@@ -3,7 +3,7 @@ const deletePost = async (db, postId) => {
         const response = await db.collection('posts').doc(postId).delete();
         return {success: true};
     } catch (error) { 
-        return {success: false, description: `${error}`};
+        return {success: false, description: error};
     }
 }
 

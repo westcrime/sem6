@@ -28,7 +28,7 @@ const login = async (userData, jwtSecretKey, db) => {
                 return { success: true, token };
             } catch (error) {
                 console.error("Error creating token:", error);
-                return { success: false, description: 'Error creating token' + error };
+                return { success: false, description: 'Error creating token' + error};
             }
         }
         // If no user is found, hash the given password and create a new entry in the login db with the email and hashed password

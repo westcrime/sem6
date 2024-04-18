@@ -3,7 +3,7 @@ import { ipcMain } from 'electron/main'
 import path from 'node:path'
 import url from 'node:url'
 import credentials from "./key.json" with { type: "json" };
-import admin from 'firebase-admin'
+import admin from "firebase-admin"
 import login from "./auth/login.js";
 import register from "./auth/register.js";
 import verify from './auth/verify.js';

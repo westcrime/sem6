@@ -22,9 +22,8 @@ const Posts = (props) => {
     }, [ipcRenderer]);
 
     const handleWritePost = () => {
-        let user;
         const postText = DOMPurify.sanitize(document.getElementById('postText').value);
-        if ((postText.indexOf('\'') || postText.indexOf('"')) !== -1) {
+        if (postText !== document.getElementById('postText').value || (postText.indexOf('\'') || postText.indexOf('"')) !== -1) {
             setError('No dangerous symbols pls')
             return
         }
@@ -32,17 +31,11 @@ const Posts = (props) => {
             if (postText.length <= 0) {
                 return;
             }
-            const token = localStorage.getItem('token');
-            let response = JSON.parse(ipcRenderer.sendSync('checkAccount', {email: email}));
-            if (!response.success) {
-                setError(response.description);
-            } else {
-                user = response.user;
-            }
+            const user = JSON.parse(localStorage.getItem('user'));
             console.log('39:', localStorage);
             const post = {token: JSON.parse(localStorage.getItem('user')).token, text: postText, date: (new Date()).toString(), role: user.role, email: user.email};
             console.log('41: ', post);
-            response = ipcRenderer.sendSync('postPost', post);
+            let response = ipcRenderer.sendSync('postPost', post);
             console.log(response);
             response = JSON.parse(response);
             if (!response.success) {
@@ -103,7 +96,7 @@ const Posts = (props) => {
                 <Card.Title>{post.userEmail} ({post.role})</Card.Title>
                 <Card.Subtitle>{new Date(post.date).toLocaleString()}</Card.Subtitle>
                 <Card.Text>{post.text}</Card.Text>
-                <Button variant="danger" hidden={!loggedIn} onClick={() => handleDeletePost(post.id)}>
+                <Button variant="danger" hidden={loggedIn ? (props.role === 'admin'? false : true) : true} onClick={() => handleDeletePost(post.id)}>
                   Удалить
                 </Button>
               </Card.Body>

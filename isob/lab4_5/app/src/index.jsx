@@ -13,6 +13,7 @@ export default function App() {
     const ipcRenderer = window.ipcRenderer;
     const [loggedIn, setLoggedIn] = useState(false);
     const [email, setEmail] = useState('');
+    const [role, setRole] = useState('');
 
     useEffect(() => {
         // Fetch the user email and token from local storage
@@ -29,18 +30,19 @@ export default function App() {
         ipcRenderer.on('verify', function (evt, message) {
             evt = JSON.parse(evt);
             setLoggedIn(evt.success);
-            setEmail(user.email || '')
+            setEmail(user.email || '');
+            setRole(user.role || '');
         });
     }, [])
 
     return (
         <HashRouter>
             <Routes>
-                <Route path='/' element={<Home email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} />} >
-                    <Route path="/posts" element={<Posts email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} setEmail={setEmail}/>} />
-                    <Route path="/login" element={<Login email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
-                    <Route path="/logout" element={<Logout email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} setEmail={setEmail}/>} />
-                    <Route path="/register" element={<Register email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} setEmail={setEmail}/>} />
+                <Route path='/' element={<Home role={role} setRole={setRole} email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} />} >
+                    <Route path="/posts" element={<Posts role={role} setRole={setRole} email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} setEmail={setEmail}/>} />
+                    <Route path="/login" element={<Login role={role} setRole={setRole} email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
+                    <Route path="/logout" element={<Logout role={role} setRole={setRole} email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} setEmail={setEmail}/>} />
+                    <Route path="/register" element={<Register role={role} setRole={setRole} email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} setEmail={setEmail}/>} />
                     <Route path="/*" element={<NoPage />} />
                 </Route>
             </Routes>

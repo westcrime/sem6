@@ -1,5 +1,5 @@
 key.json
-./build_prod/key.json
+../build_prod/key.json
 # Logs
 logs
 *.log
