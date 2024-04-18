@@ -1,6 +1,11 @@
+const checkNumberOfArgs = require('./checkNumberOfArgs');
+
 function checkVariableScope(node, stackOfScopes) {
     if (Array.isArray(node.params)) {
-        for (let param of node.params) {      
+        for (let param of node.params) {
+            if (node.type === 'CallExpression') {
+                checkNumberOfArgs(node, stackOfScopes);
+            }
             checkVariableScope(param, stackOfScopes);
         }
     }

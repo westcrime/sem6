@@ -32,7 +32,10 @@ function generateTables(node) {
                 if (!checkLiteralTypes(node.params[1])) {
                     throw new Error(`Line number: ${node.lineNumber}. Token Index: ${node.tokenIndex}. Different types of literals!`)
                 }
-                checkVariablesScopeAndType(node.params[1], stackOfTables);
+                checkVariablesScopeAndType(node, stackOfTables);
+                checkVariableScope(node, stackOfTables);
+            }
+            if (node.type === 'Variable') {
                 checkVariableScope(node, stackOfTables);
             }
             if (node.body !== undefined) {
@@ -62,7 +65,7 @@ function generateTables(node) {
                 variable.type = 'Function';
                 variable.numberOfArgs = node.params[0].params.length;
                 for (let param of node.params[0].params) {
-                    stackOfTables[stackOfTables.length - 2].push({name: param.name, type: 'Any'});
+                    stackOfTables[stackOfTables.length - 1].push({name: param.name, type: 'Any'});
                 }
             } else if (node.params[1].type === 'Operator') {
                 if (!checkLiteralTypes(node.params[1])) {
@@ -107,7 +110,7 @@ function generateTables(node) {
                 variable.type = 'String';
             }
             stackOfTables[stackOfTables.length - 2].push(variable);
-            main(node.params[1]);
+            checkVariableScope(node.params[1], stackOfTables);
         }
         if (stackOfTables.length !== 0) {
             if (stackOfTables[stackOfTables.length - 1].length !== 0) {

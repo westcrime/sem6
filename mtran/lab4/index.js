@@ -1,6 +1,6 @@
 const tokenize = require('../lab2/analyzer');
 const buildSyntaxTree = require('../lab3/syntaxAnalyzer');
-const generateTables = require('./genereateTables');
+const generateTables = require('./generateTables');
 const fs = require('fs');
 
 fs.readFile('code.txt', 'utf8', (err, data) => {

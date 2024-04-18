@@ -4,7 +4,7 @@ function checkVariablesScopeAndType(node, stackOfScopes) {
     for (let param of node.params) {
       let result = checkVariablesScopeAndType(param, stackOfScopes);
       if (expectedType !== (result === 'Any'? expectedType : result)) {
-        throw new Error(`Line number: ${param.lineNumber}. Token Index: ${param.tokenIndex}. Different types of literals: ${node.params[0].type.startsWith('Literal')? node.params[0].value : node.params[0].name} and ${param.type.startsWith('Literal')? param.value : param.name}.`);
+        throw new Error(`Line number: ${param.lineNumber}. Token Index: ${param.tokenIndex}. Different types of variables: ${node.params[0].type.startsWith('Literal')? node.params[0].value : node.params[0].name} and ${param.type.startsWith('Literal')? param.value : param.name}.`);
       }
     }
     return expectedType;

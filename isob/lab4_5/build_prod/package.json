@@ -1,0 +1,48 @@
+{
+  "name": "post-app",
+  "version": "1.0.0",
+  "description": "App for posting",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "start": "npx electron .",
+    "dev:watch": "npx electromon --trace-warnings .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "author": "Dmitriy",
+  "license": "MIT",
+  "devDependencies": {
+    "dotenv": "^16.4.5",
+    "electromon": "^1.0.10",
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.3",
+    "firebase": "^10.11.0",
+    "firebase-admin": "^12.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.5.0",
+    "node-jsonwebtoken": "^0.0.1",
+    "uuid": "^9.0.1"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "firebase-admin": "^12.1.0"
+  },
+  "build": {
+    "appId": "dima.app.westcrime.com",
+    "productName": "PostApp",
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    }
+  }
+}

@@ -14,8 +14,8 @@ function checkLiteralTypes(node, expectedType = null) {
     if (Array.isArray(node.params)) {
         for (const param of node.params) {
             if (!checkLiteralTypes(param, expectedType)) {
-            // Если один из параметров не соответствует ожидаемому типу, возвращаем false
-            return false;
+                // Если один из параметров не соответствует ожидаемому типу, возвращаем false
+                return false;
             }
         }
     }

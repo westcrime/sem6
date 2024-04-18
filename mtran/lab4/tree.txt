@@ -97,6 +97,16 @@
 						}
 					]
 				}
+			],
+			"tableOfVariables": [
+				{
+					"name": "lst",
+					"type": "Any"
+				},
+				{
+					"name": "lst2",
+					"type": "Any"
+				}
 			]
 		},
 		{
@@ -185,9 +195,23 @@
 								},
 								{
 									"lineNumber": 9,
-									"tokenIndex": 10,
-									"type": "Variable",
-									"name": "x"
+									"tokenIndex": 11,
+									"type": "CallExpression",
+									"name": "sum-list",
+									"params": [
+										{
+											"lineNumber": 9,
+											"tokenIndex": 12,
+											"type": "Variable",
+											"name": "x"
+										},
+										{
+											"lineNumber": 9,
+											"tokenIndex": 13,
+											"type": "Variable",
+											"name": "x"
+										}
+									]
 								}
 							]
 						}
@@ -247,6 +271,17 @@
 						}
 					]
 				}
+			],
+			"tableOfVariables": [
+				{
+					"name": "helloStr",
+					"type": "String"
+				},
+				{
+					"name": "errorNumber",
+					"type": "Number",
+					"value": "2"
+				}
 			]
 		},
 		{
@@ -292,19 +327,33 @@
 			]
 		},
 		{
-			"lineNumber": 18,
+			"lineNumber": 17,
+			"tokenIndex": 6,
+			"type": "Sys_func",
+			"name": "display",
+			"params": [
+				{
+					"lineNumber": 17,
+					"tokenIndex": 7,
+					"type": "Variable",
+					"name": "x"
+				}
+			]
+		},
+		{
+			"lineNumber": 19,
 			"tokenIndex": 3,
 			"type": "Sys_func",
 			"name": "define",
 			"params": [
 				{
-					"lineNumber": 18,
+					"lineNumber": 19,
 					"tokenIndex": 4,
 					"type": "Variable",
 					"name": "str"
 				},
 				{
-					"lineNumber": 18,
+					"lineNumber": 19,
 					"tokenIndex": 5,
 					"type": "Literal string",
 					"value": "'symbol'"
@@ -312,19 +361,19 @@
 			]
 		},
 		{
-			"lineNumber": 19,
+			"lineNumber": 20,
 			"tokenIndex": 3,
 			"type": "Operator",
 			"name": "+",
 			"params": [
 				{
-					"lineNumber": 19,
+					"lineNumber": 20,
 					"tokenIndex": 4,
 					"type": "Literal number",
 					"value": "+1"
 				},
 				{
-					"lineNumber": 19,
+					"lineNumber": 20,
 					"tokenIndex": 5,
 					"type": "Literal number",
 					"value": "-2"
@@ -332,50 +381,30 @@
 			]
 		},
 		{
-			"lineNumber": 20,
+			"lineNumber": 21,
 			"tokenIndex": 3,
 			"type": "Sys_func",
 			"name": "if",
 			"params": [
 				{
-					"lineNumber": 20,
+					"lineNumber": 21,
 					"tokenIndex": 5,
 					"type": "Operator",
 					"name": "<",
 					"params": [
 						{
-							"lineNumber": 20,
+							"lineNumber": 21,
 							"tokenIndex": 6,
 							"type": "Literal number",
 							"value": "2"
 						},
 						{
-							"lineNumber": 20,
+							"lineNumber": 21,
 							"tokenIndex": 7,
 							"type": "Literal number",
 							"value": "3"
 						}
 					]
-				}
-			]
-		},
-		{
-			"lineNumber": 21,
-			"tokenIndex": 3,
-			"type": "Sys_func",
-			"name": "define",
-			"params": [
-				{
-					"lineNumber": 21,
-					"tokenIndex": 4,
-					"type": "Variable",
-					"name": "firstNumber"
-				},
-				{
-					"lineNumber": 21,
-					"tokenIndex": 5,
-					"type": "Literal number",
-					"value": "6"
 				}
 			]
 		},
@@ -389,53 +418,59 @@
 					"lineNumber": 22,
 					"tokenIndex": 4,
 					"type": "Variable",
-					"name": "someNumber"
+					"name": "firstNumber"
 				},
 				{
 					"lineNumber": 22,
+					"tokenIndex": 5,
+					"type": "Literal number",
+					"value": "6"
+				}
+			]
+		},
+		{
+			"lineNumber": 23,
+			"tokenIndex": 3,
+			"type": "Sys_func",
+			"name": "define",
+			"params": [
+				{
+					"lineNumber": 23,
+					"tokenIndex": 4,
+					"type": "Variable",
+					"name": "someNumber"
+				},
+				{
+					"lineNumber": 23,
 					"tokenIndex": 6,
 					"type": "Operator",
 					"name": "+",
 					"params": [
 						{
-							"lineNumber": 22,
+							"lineNumber": 23,
 							"tokenIndex": 8,
 							"type": "Operator",
 							"name": "+",
 							"params": [
 								{
-									"lineNumber": 22,
+									"lineNumber": 23,
 									"tokenIndex": 9,
-									"type": "Literal number",
-									"value": "+1"
+									"type": "Literal string",
+									"value": "'2'"
 								},
 								{
-									"lineNumber": 22,
+									"lineNumber": 23,
 									"tokenIndex": 10,
-									"type": "Literal number",
-									"value": "2"
+									"type": "Literal string",
+									"value": "'helloStr'"
 								}
 							]
 						},
 						{
-							"lineNumber": 22,
-							"tokenIndex": 13,
-							"type": "CallExpression",
-							"name": "sum-list",
-							"params": [
-								{
-									"lineNumber": 22,
-									"tokenIndex": 14,
-									"type": "Variable",
-									"name": "x"
-								},
-								{
-									"lineNumber": 22,
-									"tokenIndex": 15,
-									"type": "Literal number",
-									"value": "2"
-								}
-							]
+							"lineNumber": 23,
+							"tokenIndex": 12,
+							"type": "Literal string",
+							"value": "\"2\""
 						}
 					]
 				}
