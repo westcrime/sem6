@@ -1,0 +1,5 @@
+{
+    "type": "DELETE",
+    "table": "users",
+    "where": "name = 'John Doe'"
+}  

@@ -1,0 +1,18 @@
+{
+    "type": "UPDATE",
+    "table": "users",
+    "set": {
+      "email": "new_email@example.com"
+    },
+    "where": {
+      "column": "id",
+      "operator": "=",
+      "subquery": {
+        "scheme": "lab5_scheme",
+        "type": "SELECT",
+        "columns": ["id"],
+        "table": "users",
+        "where": "name = 'John Doe'"
+      }
+    }
+}  

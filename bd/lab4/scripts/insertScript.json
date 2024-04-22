@@ -1,0 +1,9 @@
+{
+    "type": "INSERT",
+    "table": "users",
+    "columns": ["id", "name"],
+    "values": [
+      ["0", "john"],
+      ["1", "jane"]
+    ]
+}  

@@ -1,0 +1,29 @@
+{
+  "type": "SELECT",
+  "columns": ["users.id", "users.name"],
+  "table": "users",
+  "join": {
+    "table": "cars",
+    "on": "users.id = cars.user_id"
+  },
+  "where": {
+    "column": "users.id",
+    "operator": "IN",
+    "subquery": {
+      "scheme": "lab5_scheme",
+      "type": "SELECT",
+      "columns": ["user_id"],
+      "table": "orders",
+      "where": "total_amount > 1000"
+    }
+  },
+  "groupBy": ["users.id", "users.name"],
+  "having": "COUNT(cars.id) > 1",
+  "orderBy": [
+    {
+      "column": "users.name",
+      "direction": "ASC"
+    }
+  ],
+  "limit": 10
+}
