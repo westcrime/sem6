@@ -86,7 +86,7 @@ def starting_phase_of_the_simplex_method(c_T, A, b_T):
     x_T = np.array(x_T_auxiliary[m:]) # Шестой шаг
     while True:
         if np.all(B < n) and np.all(B >= 0): # Седьмой шаг
-            return (x_T, B)
+            return (x_T, B + 1)
         j_k = np.max(B) # Восьмой шаг
         k = np.argmax(B)
         arr1 = np.array([i for i in range(n)])
@@ -97,14 +97,13 @@ def starting_phase_of_the_simplex_method(c_T, A, b_T):
             l[arr2[i] - 1] = np.dot(A_auxiliary_B_inversed, A_auxiliary[:, i])
             if l[arr2[i] - 1][k] != 0: # Десятый шаг
                 B[k] = i
-                continue
+                break
             if l[arr2[i] - 1][k] == 0: # Одиннадцатый шаг
-                np.delete(A, j_k - n, 0)
-                np.delete(b_T, j_k - n, 0)
-                np.delete(A_auxiliary, j_k - n, 0)
-                np.delete(B, k, 0)
-                continue
-
+                A = np.delete(A, j_k - n, 0)
+                b_T = np.delete(b_T, j_k - n, 0)
+                A_auxiliary = np.delete(A_auxiliary, j_k - n, 0)
+                B = np.delete(B, k, 0)
+                break
 
     
 c_T = np.array([1, 0, 0], dtype=float)
