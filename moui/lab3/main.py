@@ -48,7 +48,7 @@ def main_phase_of_the_simplex_method(c_T, A, x_T, B):
             else:
                 O_T[i] = np.inf
         if np.all(O_T == np.inf):
-            raise 'Целевой функционал задачи не ограничен сверху на множестве допустимых планов.' # Десятый шаг
+            return 'Целевой функционал задачи не ограничен сверху на множестве допустимых планов.' # Десятый шаг
         O_0 = O_T[0]
         j_star = 0
         for i in range(len(O_T)): # Девятый и одиннадцатый шаг
@@ -65,8 +65,39 @@ def main_phase_of_the_simplex_method(c_T, A, x_T, B):
         x_T[j_star] = 0
         iteration += 1
 
-c_T = np.array([1, 1, 0, 0, 0], dtype=float)
-A = np.array([[-1, 1, 1, 0, 0], [1, 0, 0, 1, 0], [0, 1, 0, 0, 1]], dtype=float)
-x_T = np.array([0, 0, 1, 3, 2], dtype=float)
-B = ([3-1, 4-1, 5-1])
-print(main_phase_of_the_simplex_method(c_T, A, x_T, B))
+def starting_phase_of_the_simplex_method(c_T, A, b_T):
+    n = len(A)
+    m = len(A[0])
+    for i in range(len(A)): # Первый шаг
+        if b_T[i] < 0:
+            b_T[i] = -1 * b_T[i]
+            A[i] = -1 * A[i]
+    c_T_auxiliary = np.concatenate(np.zeros[n], np.full(m, -1)) # Второй шаг
+    x_T_auxiliary = np.zeros(n + m)
+    B = np.zeros(m, dtype=float)
+    A_auxiliary = np.concatenate(A, np.identity(m))
+    x_T_auxiliary = np.concatenate(np.zeros[n], b_T) # Третий шаг
+    for i in range(n, n + m):
+        B[i - n] = i
+    main_phase_of_the_simplex_method(c_T_auxiliary, A_auxiliary, x_T_auxiliary, B) # Четвертый шаг
+    for i in range(n, n + m): # Пятый шаг
+        if x_T_auxiliary != 0:
+            raise 'Задача несовместна'
+    x_T = np.array(x_T_auxiliary[:m]) # Шестой шаг
+    if np.all(B < n and B >= 0): # Седьмой шаг
+        return (x_T, B)
+    j_k = np.argmax(B) # Восьмой шаг
+    l = np.zeros(n) # Девятый шаг
+    while True:
+        arr1 = np.array([i for i in range(n)])
+        arr2 = np.array([elem for elem in arr1 if elem not in B])
+        A_auxiliary_B_inversed = np.linalg.inv(A_auxiliary[:, B])
+        for i in range(len(arr2)):
+            l[arr2[i]] = np.dot(A_auxiliary_B_inversed, A_auxiliary[:, i])
+            if
+
+    
+c_T = np.array([1, 0, 0], dtype=float)
+A = np.array([[1, 1, 1], [2, 2, 2]], dtype=float)
+b_T = np.array([0, 0], dtype=float)
+print(starting_phase_of_the_simplex_method(c_T, A, b_T))
