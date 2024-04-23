@@ -66,35 +66,45 @@ def main_phase_of_the_simplex_method(c_T, A, x_T, B):
         iteration += 1
 
 def starting_phase_of_the_simplex_method(c_T, A, b_T):
-    n = len(A)
-    m = len(A[0])
+    n = len(A[0])
+    m = len(A)
     for i in range(len(A)): # Первый шаг
         if b_T[i] < 0:
             b_T[i] = -1 * b_T[i]
             A[i] = -1 * A[i]
-    c_T_auxiliary = np.concatenate(np.zeros[n], np.full(m, -1)) # Второй шаг
+    c_T_auxiliary = np.concatenate((np.zeros(n), np.full(m, -1))) # Второй шаг
     x_T_auxiliary = np.zeros(n + m)
-    B = np.zeros(m, dtype=float)
-    A_auxiliary = np.concatenate(A, np.identity(m))
-    x_T_auxiliary = np.concatenate(np.zeros[n], b_T) # Третий шаг
+    B = np.zeros(m, dtype=int)
+    A_auxiliary = np.concatenate((A, np.identity(m)), axis=1)
+    x_T_auxiliary = np.concatenate((np.zeros(n), b_T)) # Третий шаг
     for i in range(n, n + m):
         B[i - n] = i
     main_phase_of_the_simplex_method(c_T_auxiliary, A_auxiliary, x_T_auxiliary, B) # Четвертый шаг
     for i in range(n, n + m): # Пятый шаг
-        if x_T_auxiliary != 0:
+        if x_T_auxiliary[i] != 0:
             raise 'Задача несовместна'
-    x_T = np.array(x_T_auxiliary[:m]) # Шестой шаг
-    if np.all(B < n and B >= 0): # Седьмой шаг
-        return (x_T, B)
-    j_k = np.argmax(B) # Восьмой шаг
-    l = np.zeros(n) # Девятый шаг
+    x_T = np.array(x_T_auxiliary[m:]) # Шестой шаг
     while True:
+        if np.all(B < n) and np.all(B >= 0): # Седьмой шаг
+            return (x_T, B)
+        j_k = np.max(B) # Восьмой шаг
+        k = np.argmax(B)
         arr1 = np.array([i for i in range(n)])
         arr2 = np.array([elem for elem in arr1 if elem not in B])
+        l = np.zeros((len(arr2), m)) # Девятый шаг
         A_auxiliary_B_inversed = np.linalg.inv(A_auxiliary[:, B])
         for i in range(len(arr2)):
-            l[arr2[i]] = np.dot(A_auxiliary_B_inversed, A_auxiliary[:, i])
-            if
+            l[arr2[i] - 1] = np.dot(A_auxiliary_B_inversed, A_auxiliary[:, i])
+            if l[arr2[i] - 1][k] != 0: # Десятый шаг
+                B[k] = i
+                continue
+            if l[arr2[i] - 1][k] == 0: # Одиннадцатый шаг
+                np.delete(A, j_k - n, 0)
+                np.delete(b_T, j_k - n, 0)
+                np.delete(A_auxiliary, j_k - n, 0)
+                np.delete(B, k, 0)
+                continue
+
 
     
 c_T = np.array([1, 0, 0], dtype=float)
