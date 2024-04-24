@@ -3,6 +3,32 @@ import buildQuery from './buildQuery.js';
 import { readFile } from 'fs/promises';
 import setDefaultSchema from './setDefaultScheme.js';
 import Cursor from 'pg-cursor';
+import createTrigger from './createTrigger.js';
+const createFruitsTable = JSON.parse(
+    await readFile(
+        new URL('./scripts/fruits/createFruitsTable.json', import.meta.url)
+    )
+);
+const dropFruitsTable = JSON.parse(
+    await readFile(
+        new URL('./scripts/fruits/dropFruitsTable.json', import.meta.url)
+    )
+);
+const insertFruits = JSON.parse(
+    await readFile(
+        new URL('./scripts/fruits/insertFruits.json', import.meta.url)
+    )
+);
+const updateFruits = JSON.parse(
+    await readFile(
+        new URL('./scripts/fruits/updateFruits.json', import.meta.url)
+    )
+);
+const selectFruits = JSON.parse(
+    await readFile(
+        new URL('./scripts/fruits/selectFruits.json', import.meta.url)
+    )
+);
 const selectScript = JSON.parse(
     await readFile(
         new URL('./scripts/selectScript.json', import.meta.url)
@@ -45,42 +71,44 @@ const pool = new pkg.Pool({
 
 await setDefaultSchema('lab5_scheme', pool);
 
+const client = await pool.connect();
+
 // Создаём таблицу
-let createQuery = buildQuery(createTableScript);
-await executeQuery(createQuery, pool);
+let createQuery = buildQuery(createFruitsTable);
+await executeQuery(createFruitsTable, client, createQuery, pool);
 
-// Удаляем таблицу
-let dropQuery = buildQuery(dropTableScript);
-await executeQuery(dropQuery, pool);
+let insertQuery = buildQuery(insertFruits);
+await executeQuery(insertFruits, client, insertQuery, pool);
 
+let selectQuery = buildQuery(selectFruits);
+await executeQuery(selectFruits, client, selectQuery, pool);
+
+let updateQuery = buildQuery(updateFruits);
+await executeQuery(insertFruits, client, updateQuery, pool);
+
+await executeQuery(selectFruits, client, selectQuery, pool);
+
+let dropQuery = buildQuery(dropFruitsTable);
+await executeQuery(selectFruits, client, dropQuery, pool);
 
 // Функция для выполнения запроса
-async function executeQuery(query, pool) {
-    const client = await pool.connect();
+async function executeQuery(script, client, query, pool) {
     try {
-        await client.query(query);
+        const result = await client.query(query);
+
+        if (query.toLowerCase().includes('create table')) {
+            await createTrigger(script, client, query);
+        }
+
+        if (result && result.rows) {
+            console.log(result.rows);
+        }
+
+        // Возвращаем результат для дальнейшей обработки, если необходимо
+        return result;
     } catch (error) {
         console.error('Query execution error:', error);
-    } finally {
-        client.release();
     }
 }
 
-// Функция для выполнения запроса и получения курсора
-async function executeQueryAndReturnCursor(query) {
-    // Получаем клиента из пула соединений
-    const client = await pool.connect();
-  
-    try {
-        // Выполняем запрос и получаем курсор
-        const cursor = await client.query(new Cursor(query));
-    
-        // Возвращаем курсор и клиента для последующего закрытия
-        return { cursor, client };
-    } catch (error) {
-        console.error('Query execution error:', error);
-        // Освобождаем клиента обратно в пул
-        client.release();
-        throw error;
-    }
-}
+client.release();

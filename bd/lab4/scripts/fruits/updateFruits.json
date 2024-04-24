@@ -1,8 +1,8 @@
 {
     "type": "UPDATE",
-    "table": "users",
+    "table": "fruits",
     "set": {
-      "email": "new_email@example.com"
+      "color": "purple"
     },
     "where": {
       "column": "id",
@@ -10,8 +10,12 @@
       "subquery": {
         "type": "SELECT",
         "columns": ["id"],
-        "table": "users",
-        "where": "name = 'John Doe'"
+        "table": "fruits",
+        "where": {
+            "column": "name",
+            "operator": "=",
+            "value": "'grape'"
+        }
       }
     }
 }  

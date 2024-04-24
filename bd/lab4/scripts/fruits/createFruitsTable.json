@@ -4,8 +4,7 @@
     "fields": [
       {
         "name": "id",
-        "type": "int",
-        "constraints": "NOT NULL PRIMATY KEY"
+        "type": "int"
       },
       {
         "name": "name",

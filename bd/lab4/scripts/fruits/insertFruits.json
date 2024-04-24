@@ -1,0 +1,11 @@
+{
+    "type": "INSERT",
+    "table": "fruits",
+    "columns": ["name", "color"],
+    "values": [
+      ["banan", "yellow"],
+      ["apple", "red"],
+      ["orange", "orange"],
+      ["grape", "red"]
+    ]
+}  

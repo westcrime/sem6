@@ -1,0 +1,20 @@
+{
+    "type": "SELECT",
+    "columns": ["fruits.id", "fruits.name", "fruits.color"],
+    "table": "fruits",
+    "where": {
+      "column": "fruits.id",
+      "operator": "IN",
+      "value": "(1, 2, 3, 4)"
+    },
+    "groupBy": ["fruits.color", "fruits.id", "fruits.name"],
+    "having": "COUNT(fruits.id) > 0",
+    "orderBy": [
+      {
+        "column": "fruits.id",
+        "direction": "ASC"
+      }
+    ],
+    "limit": 10
+  }
+  

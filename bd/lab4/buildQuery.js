@@ -1,4 +1,3 @@
-import buildSelectQuery from "./buildSelectQuery.js";
 import buildDDLQuery from "./buildDDLQuery.js";
 
 function buildQuery(input) {
@@ -35,9 +34,9 @@ function buildQuery(input) {
 }
   
 function buildWhereClause(where) {
-    if (typeof where === 'string') {
-        return where;
-    } else if (typeof where === 'object' && where.subquery) {
+    if (where.subquery === undefined) {
+        return `${where.column} ${where.operator} '${where.value}'`;
+    } else if (where.subquery !== undefined) {
         const subquery = buildQuery(where.subquery); // Рекурсивный вызов для подзапроса
         const operator = where.operator || 'IN'; // Оператор по умолчанию
         return `${where.column} ${operator} (${subquery})`;
@@ -46,4 +45,40 @@ function buildWhereClause(where) {
     }
 }
   
+function buildSelectQuery(input) {
+    let query = `SELECT ${input.columns.join(', ')} FROM ${input.table}`;
+    
+    if (input.join) {
+        query += ` JOIN ${input.join.table} ON ${input.join.on}`;
+    }
+    
+    if (input.where) {
+        if (input.where.subquery === undefined) {
+            query +=  ` WHERE ${input.where.column} ${input.where.operator} ${input.where.value}`;
+        } else if (input.where.subquery !== undefined) {
+            const subquery = buildQuery(input.where.subquery); // Рекурсивный вызов для подзапроса
+            const operator = input.where.operator || 'IN'; // Оператор по умолчанию
+            query +=  ` WHERE ${input.where.column} ${operator} (${subquery})`;
+        }
+    }
+    
+    if (input.groupBy) {
+        query += ` GROUP BY ${input.groupBy.join(', ')}`;
+    }
+    
+    if (input.having) {
+        query += ` HAVING ${input.having}`;
+    }
+    
+    if (input.orderBy) {
+        query += ` ORDER BY ${input.orderBy.map(ob => `${ob.column} ${ob.direction}`).join(', ')}`;
+    }
+    
+    if (input.limit) {
+        query += ` LIMIT ${input.limit}`;
+    }
+    
+    return query;
+}
+
 export default buildQuery;

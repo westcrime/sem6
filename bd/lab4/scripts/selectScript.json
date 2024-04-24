@@ -1,7 +1,7 @@
 {
   "type": "SELECT",
-  "columns": ["users.id", "users.name"],
-  "table": "users",
+  "columns": ["fruits.id", "fruits.name"],
+  "table": "fruits",
   "join": {
     "table": "cars",
     "on": "users.id = cars.user_id"
