@@ -1,0 +1,7 @@
+(define (add a b)
+    (+ a (+ a b)))
+
+(define x 1)
+(define y 2)
+(define z (+ 4 (add x y)))
+(display (add x y))

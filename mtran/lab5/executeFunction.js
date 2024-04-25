@@ -1,9 +1,11 @@
-function executeFunction(body, args) {
+import interpret from "./interpret.js"; 
+
+function executeFunction(body, args, stackOfTables, argsNames) {
     const localSymbolTable = [];
   
     // Заполняем таблицу символов аргументами функции
     for (let i = 0; i < args.length; i++) {
-        localSymbolTable.push({name: args[i].name, value: args[i].value});
+        localSymbolTable.push({name: argsNames[i].name, value: args[i].value, type: args[i].type});
     }
   
     // Добавляем новую таблицу символов в стек таблиц
@@ -12,13 +14,17 @@ function executeFunction(body, args) {
     // Результат выполнения функции
     let result;
   
-    // Выполняем каждый узел в теле функции
-    for (let node of body) {
-        result = interpret(node);
-    
-        // Если узел возвращает значение, сохраняем его как результат функции
-        if (result !== undefined) {
-            break;
+    if (body.length === undefined) {
+        result = interpret(body, stackOfTables);
+    } else {
+            // Выполняем каждый узел в теле функции
+        for (let node of body) {
+            result = interpret(node, stackOfTables);
+        
+            // Если узел возвращает значение, сохраняем его как результат функции
+            if (result !== undefined) {
+                break;
+            }
         }
     }
   
@@ -29,3 +35,4 @@ function executeFunction(body, args) {
     return result;
 }
   
+export default executeFunction;

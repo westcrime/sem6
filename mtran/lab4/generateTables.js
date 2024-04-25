@@ -70,10 +70,13 @@ function generateTables(node) {
             variable = {name: node.params[0].name};
             if (node.params[0].type === 'CallExpression') {
                 variable.type = 'Function';
+                variable.argsNames = node.params[0].params;
                 variable.numberOfArgs = node.params[0].params.length;
                 for (let param of node.params[0].params) {
                     stackOfTables[stackOfTables.length - 1].push({name: param.name, type: 'Any'});
                 }
+            } else if (node.params[1].type === 'CallExpression') {
+                variable.type = 'Any';
             } else if (node.params[1].type === 'Operator') {
                 if (!checkLiteralTypes(node.params[1])) {
                     throw new Error(`Line number: ${node.lineNumber}. Token Index: ${node.tokenIndex}. Different types of literals!`)
@@ -115,6 +118,7 @@ function generateTables(node) {
                 variable.value = node.params[1].value;
             } else if ((node.params[1].value[0] === '\'' || node.params[1].value[0] === '"') && (node.params[1].value[node.params[1].value.length - 1] === '\'' || node.params[1].value[node.params[1].value.length - 1] === '"')) {
                 variable.type = 'String';
+                variable.value = node.params[1].value;
             }
             stackOfTables[stackOfTables.length - 2].push(variable);
             checkVariableScope(node.params[1], stackOfTables);

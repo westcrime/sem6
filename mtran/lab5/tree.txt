@@ -1,0 +1,193 @@
+{
+	"type": "Program",
+	"body": [
+		{
+			"lineNumber": 1,
+			"tokenIndex": 2,
+			"type": "Sys_func",
+			"name": "define",
+			"params": [
+				{
+					"lineNumber": 1,
+					"tokenIndex": 4,
+					"type": "CallExpression",
+					"name": "add",
+					"params": [
+						{
+							"lineNumber": 1,
+							"tokenIndex": 5,
+							"type": "Variable",
+							"name": "a"
+						},
+						{
+							"lineNumber": 1,
+							"tokenIndex": 6,
+							"type": "Variable",
+							"name": "b"
+						}
+					]
+				},
+				{
+					"lineNumber": 2,
+					"tokenIndex": 6,
+					"type": "Operator",
+					"name": "+",
+					"params": [
+						{
+							"lineNumber": 2,
+							"tokenIndex": 7,
+							"type": "Variable",
+							"name": "a"
+						},
+						{
+							"lineNumber": 2,
+							"tokenIndex": 9,
+							"type": "Operator",
+							"name": "+",
+							"params": [
+								{
+									"lineNumber": 2,
+									"tokenIndex": 10,
+									"type": "Variable",
+									"name": "a"
+								},
+								{
+									"lineNumber": 2,
+									"tokenIndex": 11,
+									"type": "Variable",
+									"name": "b"
+								}
+							]
+						}
+					]
+				}
+			],
+			"tableOfVariables": [
+				{
+					"name": "a",
+					"type": "Any"
+				},
+				{
+					"name": "b",
+					"type": "Any"
+				}
+			]
+		},
+		{
+			"lineNumber": 4,
+			"tokenIndex": 3,
+			"type": "Sys_func",
+			"name": "define",
+			"params": [
+				{
+					"lineNumber": 4,
+					"tokenIndex": 4,
+					"type": "Variable",
+					"name": "x"
+				},
+				{
+					"lineNumber": 4,
+					"tokenIndex": 5,
+					"type": "Literal number",
+					"value": "1"
+				}
+			]
+		},
+		{
+			"lineNumber": 5,
+			"tokenIndex": 3,
+			"type": "Sys_func",
+			"name": "define",
+			"params": [
+				{
+					"lineNumber": 5,
+					"tokenIndex": 4,
+					"type": "Variable",
+					"name": "y"
+				},
+				{
+					"lineNumber": 5,
+					"tokenIndex": 5,
+					"type": "Literal number",
+					"value": "2"
+				}
+			]
+		},
+		{
+			"lineNumber": 6,
+			"tokenIndex": 3,
+			"type": "Sys_func",
+			"name": "define",
+			"params": [
+				{
+					"lineNumber": 6,
+					"tokenIndex": 4,
+					"type": "Variable",
+					"name": "z"
+				},
+				{
+					"lineNumber": 6,
+					"tokenIndex": 6,
+					"type": "Operator",
+					"name": "+",
+					"params": [
+						{
+							"lineNumber": 6,
+							"tokenIndex": 7,
+							"type": "Literal number",
+							"value": "4"
+						},
+						{
+							"lineNumber": 6,
+							"tokenIndex": 9,
+							"type": "CallExpression",
+							"name": "add",
+							"params": [
+								{
+									"lineNumber": 6,
+									"tokenIndex": 10,
+									"type": "Variable",
+									"name": "x"
+								},
+								{
+									"lineNumber": 6,
+									"tokenIndex": 11,
+									"type": "Variable",
+									"name": "y"
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"lineNumber": 7,
+			"tokenIndex": 3,
+			"type": "Sys_func",
+			"name": "display",
+			"params": [
+				{
+					"lineNumber": 7,
+					"tokenIndex": 5,
+					"type": "CallExpression",
+					"name": "add",
+					"params": [
+						{
+							"lineNumber": 7,
+							"tokenIndex": 6,
+							"type": "Variable",
+							"name": "x"
+						},
+						{
+							"lineNumber": 7,
+							"tokenIndex": 7,
+							"type": "Variable",
+							"name": "y"
+						}
+					]
+				}
+			]
+		}
+	]
+}
