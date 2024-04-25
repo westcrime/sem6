@@ -12,7 +12,9 @@ function generateTables(node) {
         if (node.type === 'Program') {
             main(node.body);
         }
-        if (node.name !== 'define') {
+        if (node.name === 'do') {
+            stackOfTables[stackOfTables.length - 1].push({name: node.params[0].name, type: 'Number', value: Number(node.params[0].params[0].value)});
+        } else if (node.name !== 'define') {
             if (node.type === 'CallExpression') {
                 let variableFound = null;
                 for (let scopeIndex = stackOfTables.length - 1; scopeIndex >= 0; scopeIndex--) {

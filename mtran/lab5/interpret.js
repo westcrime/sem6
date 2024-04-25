@@ -9,7 +9,6 @@ function interpret(node, stack=[]) {
     let stackOfTables = stack;
     function main(node) {
         stackOfTables.push([]);
-        
         if (node.type === 'Operator') {
             let result = performCalculations(node, stackOfTables).value;
             if (stackOfTables.length !== 0) {
@@ -23,6 +22,13 @@ function interpret(node, stack=[]) {
             return result;
         } else if (node.type === 'CallExpression') {
             let args = node.params.map(param => {
+                if (param.type.includes('Literal')) {
+                    return {name: param.name, value: param.value, type: param.type};
+                }
+                if (param.type === 'Operator' || param.type === 'CallExpression') {
+                    let result = interpret(param, stackOfTables);
+                    return {value: result, type: getType(result)};
+                }
                 let [arg, argIndex] = findVariableInStack(stackOfTables, param.name);
                 return {name: arg.name, value: arg.value, type: arg.type};
             });
@@ -39,23 +45,69 @@ function interpret(node, stack=[]) {
             }
             return result;
         } else if (node.type === 'Sys_func') {
-            if (node.name === 'set!') {
+            if (node.name === 'do')
+            {
+                stackOfTables[stackOfTables.length - 1].push({name: node.params[0].name, type: 'Number', value: Number(node.params[0].params[0].value)});
+                while (!performCalculations(node.params[1], stackOfTables).value) {
+                    main(node.params[2]);
+                    main({type: 'Sys_func', name: 'set!', params: [{type: 'Variable', name: node.params[0].name, type: 'Number', value: Number(node.params[0].params[0].value)},
+                node.params[0].params[1]]});
+                }
+            } else if (node.name === 'begin') {
+                for (let param of node.params) {
+                    main(param);
+                }
+                if (stackOfTables.length !== 0) {
+                    if (stackOfTables[stackOfTables.length - 1].length !== 0) {
+                        node.tableOfVariables = stackOfTables.pop();
+                    }
+                    else {
+                        stackOfTables.pop();
+                    }
+                }
+                return
+            } else if (node.name === 'set!') {
                 let [variable, index] = findVariableInStack(stackOfTables, node.params[0].name);
                 if (node.params[1].type === 'Operator') {
-                    stackOfTables[stackOfTables.length - 2][index].value = performCalculations(node.params[1], stackOfTables).value;
+                    variable.value = performCalculations(node.params[1], stackOfTables).value;
                 } else if (node.params[1].type === 'Variable') {
                     let [newVariable, newIndex] = findVariableInStack(stackOfTables, node.params[1].name);
-                    stackOfTables[stackOfTables.length - 2][index].value = newVariable.value;
-                    stackOfTables[stackOfTables.length - 2][index].type = newVariable.type;
+                    variable.value = newVariable.value;
+                    variable.type = newVariable.type;
                 } else if (node.params[1].type === 'CallExpression') {
-                    stackOfTables[stackOfTables.length - 2][index].value = main(node.params[1].type);
+                    // if (stackOfTables.length !== 0) {
+                    //     if (stackOfTables[stackOfTables.length - 1].length !== 0) {
+                    //         node.tableOfVariables = stackOfTables.pop();
+                    //     }
+                    //     else {
+                    //         stackOfTables.pop();
+                    //     }
+                    // }
+                    variable.value = main(node.params[1].type);
                 }
             } else if (node.name === 'display') {
                 if (node.params[0].type === 'Variable') {
                     let [newVariable, newIndex] = findVariableInStack(stackOfTables, node.params[0].name);
                     console.log(newVariable.value);
+                } else if (node.params[0].type.includes('Literal')) {
+                    console.log(node.params[0].value);
                 } else {
                     console.log(main(node.params[0]));
+                }
+            } else if (node.name === 'if') {
+                let condition = performCalculations(node.params[0], stackOfTables).value;
+                if (stackOfTables.length !== 0) {
+                    if (stackOfTables[stackOfTables.length - 1].length !== 0) {
+                        node.tableOfVariables = stackOfTables.pop();
+                    }
+                    else {
+                        stackOfTables.pop();
+                    }
+                }
+                if (condition) {
+                    return main(node.params[1]);
+                } else if (node.params[2] !== undefined){
+                    return main(node.params[2]);
                 }
             } else if (node.name === 'define') {
                 let variable = {name: node.params[0].name};
@@ -125,6 +177,17 @@ function interpret(node, stack=[]) {
                 }
             }
             return
+        } else {
+            if (stackOfTables.length !== 0) {
+                if (stackOfTables[stackOfTables.length - 1].length !== 0) {
+                    node.tableOfVariables = stackOfTables.pop();
+                }
+                else {
+                    stackOfTables.pop();
+                }
+            }
+            let [newVariable, newIndex] = findVariableInStack(stackOfTables, node.name);
+            return newVariable.value;
         }
     }
     return main(node);

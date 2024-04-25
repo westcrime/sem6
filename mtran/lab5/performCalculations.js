@@ -1,7 +1,7 @@
 import findVariableInStack from "./findVariableInStack.js";
 import executeFunction from "./executeFunction.js";
-import interpret from "./interpret.js";
 import getType from "./getType.js";
+import interpret from "./interpret.js";
 
 function performCalculations(node, stackOfTables) {
     let leftSide = {};
@@ -13,6 +13,13 @@ function performCalculations(node, stackOfTables) {
         leftSide.type = getType(leftSide.value)
     } else if (node.params[0].type === 'CallExpression') {
         let args = node.params[0].params.map(param => {
+            if (param.type.includes('Literal')) {
+                return {name: param.name, value: param.value, type: param.type};
+            }
+            if (param.type === 'Operator' || param.type === 'CallExpression') {
+                let result = interpret(param, stackOfTables);
+                return {value: result, type: getType(result)};
+            }
             let [arg, argIndex] = findVariableInStack(stackOfTables, param.name);
             return {name: arg.name, value: arg.value, type: arg.type};
         });
@@ -28,10 +35,17 @@ function performCalculations(node, stackOfTables) {
     if (node.params[1].type === 'Operator') {
         rightSide = performCalculations(node.params[1], stackOfTables);
     } else if (node.params[1].type.includes('Literal')) {
-        rightSide.value = node.params[0].value;
+        rightSide.value = node.params[1].value;
         rightSide.type = getType(rightSide.value);
     } else if (node.params[1].type === 'CallExpression') {
         let args = node.params[1].params.map(param => {
+            if (param.type.includes('Literal')) {
+                return {name: param.name, value: param.value, type: param.type};
+            }
+            if (param.type === 'Operator' || param.type === 'CallExpression') {
+                let result = interpret(param, stackOfTables);
+                return {value: result, type: getType(result)};
+            }
             let [arg, argIndex] = findVariableInStack(stackOfTables, param.name);
             return {name: arg.name, value: arg.value, type: arg.type};
         });
@@ -44,20 +58,56 @@ function performCalculations(node, stackOfTables) {
         rightSide.value = variable.value;
         rightSide.type = variable.type;
     }
-    if (rightSide.type !== leftSide.type) {
+    if (!rightSide.type.toLowerCase().includes(leftSide.type.toLowerCase()) && !leftSide.type.toLowerCase().includes(rightSide.type.toLowerCase())) {
         throw new Error('Type mismatch');
     }
+    if (node.name === '==') {
+        if (leftSide.type.toLowerCase().includes('number')) {
+            return {value: Number(leftSide.value) === Number(rightSide.value), type: 'Boolean'};
+        }
+        return {value: leftSide.value === rightSide.value, type: 'Boolean'};
+    }
+    if (node.name === '!=') {
+        if (leftSide.type.toLowerCase().includes('number')) {
+            return {value: Number(leftSide.value) !== Number(rightSide.value), type: 'Boolean'};
+        }
+        return {value: leftSide.value !== rightSide.value, type: 'Boolean'};
+    }
+    if (node.name === '<') {
+        if (leftSide.type.toLowerCase().includes('number')) {
+            return {value: Number(leftSide.value) < Number(rightSide.value), type: 'Boolean'};
+        }
+        return {value: leftSide.value < rightSide.value, type: 'Boolean'};
+    }   
+    if (node.name === '<=') {
+        if (leftSide.type.toLowerCase().includes('number')) {
+            return {value: Number(leftSide.value) <= Number(rightSide.value), type: 'Boolean'};
+        }
+        return {value: leftSide.value <= rightSide.value, type: 'Boolean'};
+    }
+    if (node.name === '>') {
+        if (leftSide.type.toLowerCase().includes('number')) {
+            return {value: Number(leftSide.value) > Number(rightSide.value), type: 'Boolean'};
+        }
+        return {value: leftSide.value > rightSide.value, type: 'Boolean'};
+    }
+    if (node.name === '>=') {
+        if (leftSide.type.toLowerCase().includes('number')) {
+            return {value: Number(leftSide.value) >= Number(rightSide.value), type: 'Boolean'};
+        }
+        return {value: leftSide.value >= rightSide.value, type: 'Boolean'};
+    }
     if (node.name === '+') {
-        if (leftSide.type === 'Number') {
+        if (leftSide.type.toLowerCase().includes('number')) {
             return {value: Number(leftSide.value) + Number(rightSide.value), type: leftSide.type};
         } else {
             return {value: leftSide.value + rightSide.value, type: leftSide.type};
         }
-    } else if (node.name === '-' && leftSide.type === 'Number') {
-        return {value: Number(leftSide.value) + Number(rightSide.value), type: leftSide.type};
-    } else if (node.name === '*' && leftSide.type === 'Number') {
+    } else if (node.name === '-' && leftSide.type.toLowerCase().includes('number')) {
+        return {value: Number(leftSide.value) - Number(rightSide.value), type: leftSide.type};
+    } else if (node.name === '*' && leftSide.type.toLowerCase().includes('number')) {
         return {value: Number(leftSide.value) * Number(rightSide.value), type: leftSide.type};
-    } else if (node.name === '/' && leftSide.type === 'Number') {
+    } else if (node.name === '/' && leftSide.type.toLowerCase().includes('number')) {
         return {value: Number(leftSide.value) / Number(rightSide.value), type: leftSide.type};
     }
 }
