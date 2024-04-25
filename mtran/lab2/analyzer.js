@@ -17,6 +17,7 @@ function tokenize(data) {
         'defun': 'SYS_FUNC',
         'define': 'SYS_FUNC',
         'null?': 'SYS_FUNC',
+        'set!': 'SYS_FUNC',
         'list?': 'SYS_FUNC',
         'display': 'SYS_FUNC',
         'eval': 'SYS_FUNC',

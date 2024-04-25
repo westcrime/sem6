@@ -35,6 +35,13 @@ function generateTables(node) {
                 checkVariablesScopeAndType(node, stackOfTables);
                 checkVariableScope(node, stackOfTables);
             }
+            if (node.name === 'set!') {
+                if (!checkLiteralTypes(node.params[1])) {
+                    throw new Error(`Line number: ${node.lineNumber}. Token Index: ${node.tokenIndex}. Different types of literals!`)
+                }
+                checkVariablesScopeAndType(node, stackOfTables);
+                checkVariableScope(node, stackOfTables);
+            }
             if (node.type === 'Variable') {
                 checkVariableScope(node, stackOfTables);
             }

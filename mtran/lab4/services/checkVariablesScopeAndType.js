@@ -1,5 +1,5 @@
 function checkVariablesScopeAndType(node, stackOfScopes) {
-  if (node.type === 'Operator') {
+  if (node.type === 'Operator' || node.name === 'set!') {
     let expectedType = checkVariablesScopeAndType(node.params[0], stackOfScopes);
     for (let param of node.params) {
       let result = checkVariablesScopeAndType(param, stackOfScopes);
