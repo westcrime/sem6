@@ -31,19 +31,8 @@ const login = async (userData, jwtSecretKey, db) => {
                 return { success: false, description: 'Error creating token' + error};
             }
         }
-        // If no user is found, hash the given password and create a new entry in the login db with the email and hashed password
     } else {
         return { success: false, description: 'No user found'};
-        // console.log({ email, password: hashedPassword});
-        // const response = db.collection('users').doc(email).set({email: email, password: hashedPassword, role: 'default'});
-        //
-        // let loginData = {
-        //     email,
-        //     signInTime: Date.now(),
-        // }
-        //
-        // const token = jwt.sign(loginData, jwtSecretKey)
-        // res.status(200).json({ success: true, token })
     }
 }
 
