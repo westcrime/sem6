@@ -7,4 +7,6 @@
       n
       (+ (fib (- n 1)) (fib (- n 2)))))
 
-(display (fib 10))
+(define x (list 10 2 3))
+(display x[0])
+(display (fib x[0]))

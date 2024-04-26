@@ -1,6 +1,6 @@
 const checkNumberOfArgs = require('./checkNumberOfArgs');
 
-function checkVariableScope(node, stackOfScopes) {
+function checkVariableScope(node, stackOfScopes, name=node.name) {
     if (Array.isArray(node.params)) {
         for (let param of node.params) {
             if (node.type === 'CallExpression') {
@@ -13,7 +13,7 @@ function checkVariableScope(node, stackOfScopes) {
         if (node.type.startsWith('Literal')) {
             return;
         }
-        const variableName = node.name;
+        const variableName = name;
         let variableFound = false;
         let variableType = null;
         for (let scopeIndex = stackOfScopes.length - 1; scopeIndex >= 0; scopeIndex--) {

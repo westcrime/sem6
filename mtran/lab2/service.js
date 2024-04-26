@@ -15,7 +15,10 @@ function isValidIdentifier(identifier) {
         const char = identifier[i];
         // Разрешаем буквы, цифры, дефисы и знаки подчеркивания
         if (!((char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z') || (char >= '0' && char <= '9') || char === '-' || char === '_')) {
-            return false;
+            if (char !== '[' && char !== ']')
+            {
+                return false;
+            }
         }
     }
 
@@ -24,7 +27,7 @@ function isValidIdentifier(identifier) {
 }
 
 function spaceText(text) {
-    const brackets = ['(', ')', '[', ']', '{', '}', '\n'];
+    const brackets = ['(', ')', '{', '}', '\n'];
     
     // Преобразуем строку в массив символов
     const characters = text.split('');

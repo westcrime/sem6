@@ -20,6 +20,17 @@ function interpret(node, stack=[]) {
                 }
             }
             return result;
+        } else if (node.type === 'Variable') {
+            if (stackOfTables.length !== 0) {
+                if (stackOfTables[stackOfTables.length - 1].length !== 0) {
+                    node.tableOfVariables = stackOfTables.pop();
+                }
+                else {
+                    stackOfTables.pop();
+                }
+            }
+            let [newVariable, newIndex] = findVariableInStack(stackOfTables, node.name);
+            return newVariable.value;
         } else if (node.type === 'CallExpression') {
             let args = node.params.map(param => {
                 if (param.type.includes('Literal')) {
@@ -177,17 +188,6 @@ function interpret(node, stack=[]) {
                 }
             }
             return
-        } else {
-            if (stackOfTables.length !== 0) {
-                if (stackOfTables[stackOfTables.length - 1].length !== 0) {
-                    node.tableOfVariables = stackOfTables.pop();
-                }
-                else {
-                    stackOfTables.pop();
-                }
-            }
-            let [newVariable, newIndex] = findVariableInStack(stackOfTables, node.name);
-            return newVariable.value;
         }
     }
     return main(node);

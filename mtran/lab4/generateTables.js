@@ -45,7 +45,11 @@ function generateTables(node) {
                 checkVariableScope(node, stackOfTables);
             }
             if (node.type === 'Variable') {
-                checkVariableScope(node, stackOfTables);
+                if (node.name.includes('[')) {
+                    checkVariableScope(node, stackOfTables, node.name.split('[')[0]);
+                } else {
+                    checkVariableScope(node, stackOfTables);
+                }
             }
             if (node.body !== undefined) {
                 for (let expr of node.body) {

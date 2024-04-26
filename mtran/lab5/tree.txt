@@ -214,19 +214,73 @@
 			"lineNumber": 10,
 			"tokenIndex": 3,
 			"type": "Sys_func",
-			"name": "display",
+			"name": "define",
 			"params": [
 				{
 					"lineNumber": 10,
+					"tokenIndex": 4,
+					"type": "Variable",
+					"name": "x"
+				},
+				{
+					"lineNumber": 10,
+					"tokenIndex": 6,
+					"type": "Sys_func",
+					"name": "list",
+					"params": [
+						{
+							"lineNumber": 10,
+							"tokenIndex": 7,
+							"type": "Literal number",
+							"value": "10"
+						},
+						{
+							"lineNumber": 10,
+							"tokenIndex": 8,
+							"type": "Literal number",
+							"value": "2"
+						},
+						{
+							"lineNumber": 10,
+							"tokenIndex": 9,
+							"type": "Literal number",
+							"value": "3"
+						}
+					]
+				}
+			]
+		},
+		{
+			"lineNumber": 11,
+			"tokenIndex": 3,
+			"type": "Sys_func",
+			"name": "display",
+			"params": [
+				{
+					"lineNumber": 11,
+					"tokenIndex": 4,
+					"type": "Variable",
+					"name": "x[0]"
+				}
+			]
+		},
+		{
+			"lineNumber": 12,
+			"tokenIndex": 3,
+			"type": "Sys_func",
+			"name": "display",
+			"params": [
+				{
+					"lineNumber": 12,
 					"tokenIndex": 5,
 					"type": "CallExpression",
 					"name": "fib",
 					"params": [
 						{
-							"lineNumber": 10,
+							"lineNumber": 12,
 							"tokenIndex": 6,
-							"type": "Literal number",
-							"value": "10"
+							"type": "Variable",
+							"name": "x[0]"
 						}
 					]
 				}
