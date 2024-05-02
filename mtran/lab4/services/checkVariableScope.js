@@ -10,10 +10,13 @@ function checkVariableScope(node, stackOfScopes, name=node.name) {
         }
     }
     else {
+        let variableName = name;
         if (node.type.startsWith('Literal')) {
             return;
         }
-        const variableName = name;
+        if (node.name.includes('[')) {
+            variableName = node.name.split('[')[0];
+        }
         let variableFound = false;
         let variableType = null;
         for (let scopeIndex = stackOfScopes.length - 1; scopeIndex >= 0; scopeIndex--) {

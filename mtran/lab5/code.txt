@@ -2,11 +2,14 @@
     (>= i 10)
   (display i))
 
+(define x (list 10 2 3))
+
 (define (fib n)
     (if (< n 2)
       n
       (+ (fib (- n 1)) (fib (- n 2)))))
 
-(define x (list 10 2 3))
+
 (display x[0])
+(set! x[0] 20)
 (display (fib x[0]))

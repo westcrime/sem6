@@ -1,9 +1,15 @@
 function checkVariablesScopeAndType(node, stackOfScopes) {
   if (node.type === 'Operator' || node.name === 'set!') {
     let expectedType = checkVariablesScopeAndType(node.params[0], stackOfScopes);
+    if (node.params[0].name !== undefined && node.params[0].name.includes('[')) {
+      expectedType = 'Any';
+    }
     for (let param of node.params) {
       let result = checkVariablesScopeAndType(param, stackOfScopes);
-      if (expectedType !== (result === 'Any'? expectedType : result)) {
+      if (param.name !== undefined && param.name.includes('[')) {
+        result = 'Any';
+      }
+      if (expectedType !== (result === 'Any'? expectedType : result) && result !== (expectedType === 'Any'? result : expectedType)) {
         throw new Error(`Line number: ${param.lineNumber}. Token Index: ${param.tokenIndex}. Different types of variables: ${node.params[0].type.startsWith('Literal')? node.params[0].value : node.params[0].name} and ${param.type.startsWith('Literal')? param.value : param.name}.`);
       }
     }
@@ -15,7 +21,10 @@ function checkVariablesScopeAndType(node, stackOfScopes) {
     return expectedType;
   }
   if (node.type === 'Variable') {
-    const variableName = node.name;
+    let variableName = node.name;
+    if (node.name.includes('[')) {
+      variableName = node.name.split('[')[0];
+    }
     let variableFound = false;
     let variableType = null;
     for (let scopeIndex = stackOfScopes.length - 1; scopeIndex >= 0; scopeIndex--) {

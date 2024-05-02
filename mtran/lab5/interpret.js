@@ -78,23 +78,50 @@ function interpret(node, stack=[]) {
                 }
                 return
             } else if (node.name === 'set!') {
-                let [variable, index] = findVariableInStack(stackOfTables, node.params[0].name);
+                let variable = {};
+                if (node.params[0].name.includes('[')) {
+                    let [newVariable_, index] = findVariableInStack(stackOfTables, node.params[0].name.split('[')[0]);
+                    variable = newVariable_;
+                } else {
+                    let [newVariable_, index] = findVariableInStack(stackOfTables, node.params[0].name);
+                    variable = newVariable_;
+                }
                 if (node.params[1].type === 'Operator') {
-                    variable.value = performCalculations(node.params[1], stackOfTables).value;
-                } else if (node.params[1].type === 'Variable') {
+                    let result = performCalculations(node.params[1], stackOfTables).value;
+                    if (node.params[0].name.includes('[')) {
+                        variable.value[node.params[0].name.split('[')[1].split(']')[0]].value = result;
+                        variable.value[node.params[0].name.split('[')[1].split(']')[0]].type = 'Literal ' + getType(result);
+                    } else {
+                        variable.value = result;
+                        variable.type = 'Literal ' + getType(result);
+                    }
+                } else if (node.params[1].type.includes('Literal')) {
+                    if (node.params[0].name.includes('[')) {
+                        variable.value[node.params[0].name.split('[')[1].split(']')[0]].value = node.params[1].value;
+                        variable.value[node.params[0].name.split('[')[1].split(']')[0]].type = 'Literal ' + getType(node.params[1].value);
+                    } else {
+                        variable.value = node.params[1].value;
+                        variable.type = 'Literal ' + getType(node.params[1].value);
+                    }
+                }
+                    else if (node.params[1].type === 'Variable') {
                     let [newVariable, newIndex] = findVariableInStack(stackOfTables, node.params[1].name);
-                    variable.value = newVariable.value;
-                    variable.type = newVariable.type;
+                    if (node.params[0].name.includes('[')) {
+                        variable.value[node.params[0].name.split('[')[1].split(']')[0]].value = newVariable.value;
+                        variable.value[node.params[0].name.split('[')[1].split(']')[0]].type = 'Literal ' + newVariable.type;
+                    } else {
+                        variable.value = newVariable.value;
+                        variable.type = 'Literal ' + newVariable.type;
+                    }
                 } else if (node.params[1].type === 'CallExpression') {
-                    // if (stackOfTables.length !== 0) {
-                    //     if (stackOfTables[stackOfTables.length - 1].length !== 0) {
-                    //         node.tableOfVariables = stackOfTables.pop();
-                    //     }
-                    //     else {
-                    //         stackOfTables.pop();
-                    //     }
-                    // }
-                    variable.value = main(node.params[1].type);
+                    let result = main(node.params[1].type);
+                    if (node.params[0].name.includes('[')) {
+                        variable.value[node.params[0].name.split('[')[1].split(']')[0]].value = result;
+                        variable.value[node.params[0].name.split('[')[1].split(']')[0]].type = 'Literal ' + getType(result);
+                    } else {
+                        variable.value = result;
+                        variable.type = 'Literal ' + getType(result);
+                    }
                 }
             } else if (node.name === 'display') {
                 if (node.params[0].type === 'Variable') {
