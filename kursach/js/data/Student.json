@@ -13,15 +13,13 @@
 			"notNull": true,
 			"type": "StringType"
 		},
-		"car": {
+		"groupId": {
 			"onDelete": "Cascade",
-			"otherTable": "Car",
+			"otherTable": "Group",
 			"fieldName": "id",
 			"type": "ForeignKeyType"
 		}
 	},
 	"data": [],
-	"references": [
-		"Student"
-	]
+	"references": []
 }

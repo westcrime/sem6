@@ -5,13 +5,13 @@ import ForeignKeyType from './basic_types/ForeignKeyType.js';
 import Pointer from './Pointer.js';
 
 class Group extends Table {
-    id = new NumberType(0, true);
+    id = new NumberType(0, true, true);
     name = new StringType(256, 'NoName', false, true);
     car = new ForeignKeyType('Car', 'id', 'Cascade');
 }
 
 class Car extends Table {
-    id = new NumberType(0, true);
+    id = new NumberType(0, true, true);
     name = new StringType(256, 'NoName', false, true);
 }
 
@@ -27,16 +27,33 @@ async function main() {
         name: 'John',
         groupId: 1,
     };
+    const groupData = {
+        id: 1,
+        name: '153502',
+        car: 1,
+    };
+    const carData = {
+        id: 1,
+        name: 'BMW'
+    };
     const student = new Student();
-    // const group = new Group();
-    // const car = new Car();
-    // await car.createTable();
-    // await group.createTable();
-    await student.createTable();
+    const group = new Group();
+    const car = new Car();
     await student.deleteTable();
+    await group.deleteTable();
+    await car.deleteTable();
+    await car.createTable();
+    await group.createTable();
+    await student.createTable();
     const pointer = new Pointer();
+    await pointer.connect('Car');
+    await pointer.save(carData);
+    await pointer.connect('Group');
+    await pointer.save(groupData);
     await pointer.connect('Student');
     await pointer.save(studentData);
+    await pointer.connect('Car');
+    await pointer.delete(1);
 }
 
 main().catch(console.error);

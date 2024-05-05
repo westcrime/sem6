@@ -3,6 +3,7 @@
 		"id": {
 			"defaultValue": 0,
 			"notNull": true,
+			"primaryKey": true,
 			"type": "NumberType"
 		},
 		"name": {

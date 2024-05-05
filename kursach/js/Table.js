@@ -1,10 +1,5 @@
-import NumberType from './basic_types/NumberType.js';
-import StringType from './basic_types/StringType.js';
-import BooleanType from './basic_types/BooleanType.js';
-import ForeignKeyType from './basic_types/ForeignKeyType.js';
 import { fileURLToPath } from 'url';
 import path, { dirname, join } from 'path';
-import { constants } from 'fs';
 import fs from 'fs/promises';
 import { exists, getFilesInDirectory } from './services.js';
 
@@ -56,6 +51,10 @@ class Table {
             const otherTableFileDataJson = JSON.parse(otherTableFileData);
             if (Object.keys(otherTableFileDataJson.fields).indexOf(fieldName) === -1) {
                 throw new Error(`Field ${fieldName} in table ${otherTable} does not exist`);
+            } else {
+                if (!otherTableFileDataJson.fields[fieldName].primaryKey) {
+                    throw new Error(`Field ${fieldName} in table ${otherTable} is not primary key`);
+                }
             }
         } else {
             throw new Error(`Table ${otherTable} does not exist`);
@@ -68,6 +67,7 @@ class Table {
             throw new Error(`Table ${this.constructor.name} already exists`);
         } else {
             let fields = {};
+            let isPrimaryKeyChecked = false;
             for (const field of Object.keys(this)) {
                 if (this[field].type === 'ForeignKeyType') {
                     await this.checkForeignKey(this[field].otherTable, this[field].fieldName);
@@ -77,6 +77,17 @@ class Table {
                 
                     tableData.references.push(this.constructor.name);
                     await fs.writeFile(join(__dirname, '.', 'data', `${this[field].otherTable}.json`), JSON.stringify(tableData, null, '\t'));
+                }
+                if (this[field].primaryKey === true) {
+                    if (isPrimaryKeyChecked === false) {
+                        isPrimaryKeyChecked = true;
+                        if (this[field].type !== 'NumberType') {
+                            throw new Error(`Primary key must be a number`);
+                        }
+                    }
+                    else {
+                        throw new Error(`There is already primary key in table ${this.constructor.name}`);
+                    }
                 }
                 fields[field] = this[field];
                 fields[field].type = this[field].type;
