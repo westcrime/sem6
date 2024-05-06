@@ -1,0 +1,26 @@
+{
+	"fields": {
+		"id": {
+			"defaultValue": 0,
+			"type": "NumberType",
+			"notNull": true,
+			"primaryKey": true
+		},
+		"name": {
+			"maxLength": 256,
+			"defaultValue": "NoName",
+			"type": "StringType",
+			"canBeEmpty": false,
+			"notNull": true
+		}
+	},
+	"data": [
+		{
+			"id": 1,
+			"name": "BMW"
+		}
+	],
+	"references": [
+		"Group"
+	]
+}

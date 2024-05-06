@@ -1,117 +1,129 @@
-import NumberType from './basic_types/NumberType';
-import StringType from './basic_types/StringType';
-import BooleanType from './basic_types/BooleanType';
-import ForeignKeyType from './basic_types/ForeignKeyType';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import { constants } from 'fs';
-import * as fs from 'fs/promises';
+import path, { dirname, join } from 'path';
+import fs from 'fs/promises';
+import { exists, getFilesInDirectory } from './services.ts';
+
+// Получаем полный путь к текущему модулю
+const __filename = fileURLToPath(import.meta.url);
 
 // Получаем директорию, в которой находится текущий модуль
-const __dirname: string = dirname('./index.ts');
-
+const __dirname = dirname(__filename);
 
 class Table {
-
-    [key: string]: any;
-
-    private isConnected: boolean = false;
-
-    public async connect() {
-        if (this.isConnected) {
-            return;
+    [key: string]: any; 
+    async checkForCyclicForeignKey(tableName: string, visitedTables: string[] = []) {
+        // Если таблица уже была посещена, значит есть цикл
+        if (visitedTables.includes(tableName)) {
+            throw new Error(`Cyclic foreign key detected in table ${tableName}`);
         }
-
-        const pathToFile: string = join(__dirname, '.', 'data', `${this.constructor.name}.json`);
-        try {
-            await fs.access(pathToFile, constants.F_OK);
-            console.log(`file ${pathToFile} exists`);
-            const fileData: {[key: string]: any} = JSON.parse(await fs.readFile(pathToFile, 'utf-8'));
-            if (fileData.fields !== undefined) {
-                for (const field of fileData.fields) {
-                    if (this[field] !== undefined) {
-                        if (fileData.fields[field] !== this[field]) {
-                            throw new Error('Table data is corrupted');
-                        }
-                    } else {
-                        throw new Error('Table data is corrupted');
-                    }
-                }
-
-            } else {
-                throw new Error('Table data is corrupted');
+      
+        // Добавить текущую таблицу в посещенные
+        visitedTables.push(tableName);
+      
+        // Получаем путь к файлу таблицы
+        const pathToTable = join(__dirname, '.', 'data', `${tableName}.json`);
+        if (tableName === this.constructor.name) {
+            throw new Error(`Cyclic foreign key detected in table ${tableName}`);
+        }
+      
+        // Проверяем существование файла таблицы
+        if (!(await exists(pathToTable))) {
+            throw new Error(`Table ${tableName} does not exist`);
+        }
+      
+        // Читаем данные таблицы
+        const tableData = JSON.parse(await fs.readFile(pathToTable, 'utf-8'));
+      
+        // Перебираем поля таблицы и ищем foreign keys
+        for (const fieldName in tableData.fields) {
+            const field = tableData.fields[fieldName];
+            if (field.type === 'ForeignKeyType') {
+                // Рекурсивно проверяем связанную таблицу
+                await this.checkForCyclicForeignKey(field.otherTable, [...visitedTables]);
             }
-        } catch {
-            console.log(`file ${pathToFile} does not exists`);
-            await fs.writeFile(pathToFile, JSON.stringify({fields: Object.keys(this), data: [], references: []}));
         }
-        this.isConnected = true;
-    }
-    
-    public async save(data: {[key: string]: any}): Promise<void> {
-        if (!this.isConnected) {
-            throw new Error('Table is not connected');
-        }
-        // Валидация данных перед сохранением
-        this.validate(data);
     }
 
-    // Метод для валидации данных перед сохранением
-    private validate(data: {[key: string]: any}): void {
-        // Перебираем ключи объекта data
-        for (const key in data) {
-            // Получаем описание поля из текущего экземпляра класса
-            const fieldDescription = this[key];
-            
-            // Проверяем, является ли поле экземпляром StringType
-            if (fieldDescription instanceof StringType) {
-                let value: string = data[key];
-                // Проверяем максимальную длину строки
-                if (value.length > fieldDescription.maxLength) {
-                    throw new Error(`The length of the '${key}' field exceeds the maximum allowed length of ${fieldDescription.maxLength} characters.`);
+    async checkForeignKey(tableWithForeignKey: string, fieldNameOfForeignKey: string) {
+        const pathToTableWithForeignKey = join(__dirname, '.', 'data', `${tableWithForeignKey}.json`)
+        if (await exists(pathToTableWithForeignKey)) {
+            const tableWithForeignKeyData = await fs.readFile(pathToTableWithForeignKey, 'utf-8');
+            const tableWithForeignKeyDataJson = JSON.parse(tableWithForeignKeyData);
+            if (Object.keys(tableWithForeignKeyDataJson.fields).indexOf(fieldNameOfForeignKey) === -1) {
+                throw new Error(`Field ${fieldNameOfForeignKey} in table ${tableWithForeignKey} does not exist`);
+            } else {
+                if (!tableWithForeignKeyDataJson.fields[fieldNameOfForeignKey].primaryKey) {
+                    throw new Error(`Field ${fieldNameOfForeignKey} in table ${tableWithForeignKey} is not primary key`);
                 }
-                if (value === null) {
-                    if (fieldDescription.notNull) {
-                        throw new Error(`'${key}' is null, but it cant be null.`);
-                    }
-                }
-                if (value.trim() === '') {
-                    if (fieldDescription.canBeEmpty) {
-                        throw new Error(`'${key}' is empty? but it cant be empty.`);
-                    } else {
-                        value = fieldDescription.defaultValue;
-                    }
-                }
+            }
+        } else {
+            throw new Error(`Table ${tableWithForeignKey} does not exist`);
+        }
+    }
+
+    async createTable() {
+        const pathToFile = join(__dirname, '.', 'data', `${this.constructor.name}.json`);
+        if (await exists(pathToFile)) {
+            throw new Error(`Table ${this.constructor.name} already exists`);
+        } else {
+            let fields: any = {};
+            let isPrimaryKeyChecked = false;
+            for (const field of Object.keys(this)) {
+                if (this[field].type === 'ForeignKeyType') {
+                    await this.checkForeignKey(this[field].otherTable, this[field].fieldName);
+                    await this.checkForCyclicForeignKey(this[field].otherTable);
+                    // Читаем данные таблицы
+                    const tableData = JSON.parse(await fs.readFile(join(__dirname, '.', 'data', `${this[field].otherTable}.json`), 'utf-8'));
                 
-            } else if (fieldDescription instanceof NumberType) {
-                let value: number = data[key];
-                if (value === null) {
-                    if (fieldDescription.notNull) {
-                        throw new Error(`'${key}' is null, but it cant be null.`);
+                    tableData.references.push(this.constructor.name);
+                    await fs.writeFile(join(__dirname, '.', 'data', `${this[field].otherTable}.json`), JSON.stringify(tableData, null, '\t'));
+                }
+                if (this[field].primaryKey === true) {
+                    if (isPrimaryKeyChecked === false) {
+                        isPrimaryKeyChecked = true;
+                        if (this[field].type !== 'NumberType') {
+                            throw new Error(`Primary key must be a number`);
+                        }
+                    }
+                    else {
+                        throw new Error(`There is already primary key in table ${this.constructor.name}`);
                     }
                 }
-                if (value === undefined) {
-                    value = fieldDescription.defaultValue;
-                }
-            } else if (fieldDescription instanceof BooleanType) {
-                let value: boolean = data[key];
-                if (value === null) {
-                    if (fieldDescription.notNull) {
-                        throw new Error(`'${key}' is null, but it cant be null.`);
-                    }
-                }
-                if (value === undefined) {
-                    value = fieldDescription.defaultValue;
-                }
-            } else if (fieldDescription instanceof ForeignKeyType) {
-                if (fieldDescription.otherTable === undefined) {
-                    throw new Error(`'${fieldDescription.fieldName}' is unknown field of table ${fieldDescription.otherTable}.`);
-                }
-            } else {
-                throw new Error(`'${key}' is unknown fieldtype.`);
+                fields[field] = this[field];
+                fields[field].type = this[field].type;
             }
+            await fs.writeFile(pathToFile, JSON.stringify({ fields: fields, data: [], references: []}, null, '\t'));
+        }
+    }
+
+    async deleteTable() {
+        const pathToFile = join(__dirname, '.', 'data', `${this.constructor.name}.json`);
+        if (await exists(pathToFile)) {
+            const tableData = JSON.parse(await fs.readFile(pathToFile, 'utf-8'));
+            if (tableData.references.length === 0) {
+                await fs.unlink(pathToFile);
+                await this.deleteTableReferences(this.constructor.name);
+            } else {
+                throw new Error(`Table ${this.constructor.name} is referenced`);
+            }
+        } else {
+            throw new Error(`Table ${this.constructor.name} does not exist`);
+        }
+    }
+
+    async deleteTableReferences(tableName: string) {
+        const files = (await getFilesInDirectory(path.join(__dirname, 'data')));
+        if (files) {
+            for (const file of files) {
+                const tableData = JSON.parse(await fs.readFile(path.join(__dirname, 'data', `${file}`), 'utf-8'));
+                if (tableData.references.includes(tableName)) {
+                    tableData.references = tableData.references.filter((reference: string) => reference !== tableName);
+                    await fs.writeFile(path.join(__dirname, 'data', `${file}`), JSON.stringify(tableData, null, '\t'));
+                }
+            }
+        } else {
+            throw new Error(`Table ${tableName} does not exist`);
         }
     }
 }
-
 export default Table;

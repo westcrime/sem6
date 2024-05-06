@@ -1,0 +1,38 @@
+{
+	"fields": {
+		"id": {
+			"defaultValue": 0,
+			"type": "NumberType",
+			"notNull": true,
+			"primaryKey": true
+		},
+		"name": {
+			"maxLength": 256,
+			"defaultValue": "NoName",
+			"type": "StringType",
+			"canBeEmpty": false,
+			"notNull": true
+		},
+		"car": {
+			"fieldName": "id",
+			"onDelete": "Cascade",
+			"type": "ForeignKeyType",
+			"otherTable": "Car"
+		}
+	},
+	"data": [
+		{
+			"id": 3,
+			"name": "153fsdf503",
+			"car": 1
+		},
+		{
+			"id": 2,
+			"name": "153503",
+			"car": 1
+		}
+	],
+	"references": [
+		"Student"
+	]
+}

@@ -1,10 +1,11 @@
 class BooleanType {
-    public defaultValue: boolean;
-    public notNull: boolean;
-    public constructor(defaultValue: boolean, notNull: boolean) {
+    defaultValue: boolean;
+    notNull: boolean;
+    type: string;
+    constructor(defaultValue: boolean, notNull: boolean) {
         this.defaultValue = defaultValue;
+        this.type = 'BooleanType';
         this.notNull = notNull;
     }
 }
-
 export default BooleanType;
