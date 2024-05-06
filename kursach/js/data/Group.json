@@ -20,7 +20,18 @@
 			"type": "ForeignKeyType"
 		}
 	},
-	"data": [],
+	"data": [
+		{
+			"id": 1,
+			"name": "153502",
+			"car": 1
+		},
+		{
+			"id": 2,
+			"name": "153503",
+			"car": 1
+		}
+	],
 	"references": [
 		"Student"
 	]

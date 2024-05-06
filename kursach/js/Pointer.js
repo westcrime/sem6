@@ -13,17 +13,16 @@ class Pointer {
     currentTable;
     isConnected = false;
 
-    async connect(tableName) {
+    async connect(tableName) { 
         if (this.isConnected) {
-            const pathToTable = join(__dirname, '.', 'data', `${this.currentTable}.json`);
-            const tableData = JSON.parse(await fs.readFile(pathToTable, 'utf-8')); 
+            const tableData = JSON.parse(await fs.readFile(join(__dirname, '.', 'data', `${this.currentTable}.json`), 'utf-8'));
             for (const key of Object.keys(tableData.fields)) {
                 delete this[key];
             }
         }
         const pathToTable = join(__dirname, '.', 'data', `${tableName}.json`);
         if (await exists(pathToTable)) {
-            const tableData = JSON.parse(await fs.readFile(pathToTable, 'utf-8')); 
+            const tableData = JSON.parse(await fs.readFile(pathToTable, 'utf-8'));
             for (const key of Object.keys(tableData.fields)) {
                 this[key] = tableData.fields[key];
             }
@@ -36,7 +35,7 @@ class Pointer {
 
     async save(data) {
         if (this.isConnected) {
-            await this.validate(data);
+            data = await this.validate(data);
             const tableData = JSON.parse(await fs.readFile(join(__dirname, '.', 'data', `${this.currentTable}.json`), 'utf-8'));
             tableData.data.push(data);
             await fs.writeFile(join(__dirname, '.', 'data', `${this.currentTable}.json`), JSON.stringify(tableData, null, '\t'));
@@ -47,7 +46,7 @@ class Pointer {
 
     async validate(data) {
         if (Object.keys(data).length !== Object.keys(this).length - 2) {
-            throw new Error('Wrong args length');
+            throw new Error(`${this.currentTable}: Wrong args length`);
         }
         // Перебираем ключи объекта data
         for (const key of Object.keys(data)) {
@@ -56,28 +55,30 @@ class Pointer {
             // Проверяем, является ли поле экземпляром StringType
             if (fieldDescription.type === 'StringType') {
                 let value = data[key];
-                // Проверяем максимальную длину строки
-                if (value.length > fieldDescription.maxLength) {
-                    throw new Error(`${this.currentTable}: The length of the '${key}' field exceeds the maximum allowed length of ${fieldDescription.maxLength} characters.`);
+                if (value === undefined || value.trim() === '') {
+                    if (!fieldDescription.canBeEmpty) {
+                        throw new Error(`${this.currentTable}: '${key}' is empty, but it cant be empty.`);
+                    }
+                    else {
+                        data[key] = fieldDescription.defaultValue;
+                        continue;
+                    }
                 }
-                if (value === null) {
-                    if (fieldDescription.notNull) {
+                
+                if (fieldDescription.notNull) {
+                    if (value === null) {
                         throw new Error(`${this.currentTable}: '${key}' is null, but it cant be null.`);
                     }
                 }
-                if (value.trim() === '') {
-                    if (fieldDescription.canBeEmpty) {
-                        throw new Error(`${this.currentTable}: '${key}' is empty? but it cant be empty.`);
-                    }
-                    else {
-                        value = fieldDescription.defaultValue;
-                    }
+                // Проверяем максимальную длину строки
+                if (value !== undefined && value !== null && value.length > fieldDescription.maxLength) {
+                    throw new Error(`${this.currentTable}: The length of the '${key}' field exceeds the maximum allowed length of ${fieldDescription.maxLength} characters.`);
                 }
             }
             else if (fieldDescription.type === 'NumberType') {
                 let value = data[key];
-                if (value === null) {
-                    if (fieldDescription.notNull) {
+                if (fieldDescription.notNull) {
+                    if (value === null) {
                         throw new Error(`${this.currentTable}: '${key}' is null, but it cant be null.`);
                     }
                 }
@@ -88,7 +89,7 @@ class Pointer {
                     }
                 }
                 if (value === undefined) {
-                    value = fieldDescription.defaultValue;
+                    data[key] = fieldDescription.defaultValue;
                 }
             }
             else if (fieldDescription.type === 'BooleanType') {
@@ -99,7 +100,7 @@ class Pointer {
                     }
                 }
                 if (value === undefined) {
-                    value = fieldDescription.defaultValue;
+                    data[key] = fieldDescription.defaultValue;
                 }
             }
             else if (fieldDescription.type === 'ForeignKeyType') {
@@ -115,6 +116,7 @@ class Pointer {
                 throw new Error(`${this.currentTable}: '${key}' is unknown fieldtype.`);
             }
         }
+        return data;
     }
 
     async checkForeignKey(otherTable, fieldValue, fieldName) {
@@ -134,11 +136,47 @@ class Pointer {
         }
     }
 
-
-    async delete(id, tableName = this.currentTable) {
+    async get(filter, tableName = this.currentTable) {
         if (this.isConnected !== true) {
             throw new Error('You must connect to the table first.');
         }
+        const objectsToSend = await this.filterObjects(filter, tableName);
+        const primaryKeyField = await this.getPrimaryKeyFieldOfTable(tableName);
+        const tableData = JSON.parse(await fs.readFile(join(__dirname, '.', 'data', `${tableName}.json`), 'utf-8'));
+        return tableData.data.filter(object => objectsToSend.indexOf(object[primaryKeyField]) !== -1);
+    }
+
+    async update(pkValue, data, tableName = this.currentTable) {
+        if (this.isConnected !== true) {
+            throw new Error('You must connect to the table first.');
+        }
+        data = await this.validate(data);
+        const primaryKeyField = await this.getPrimaryKeyFieldOfTable(tableName);
+        const pathToTableName = join(__dirname, '.', 'data', `${tableName}.json`);
+        const tableData = JSON.parse(await fs.readFile(pathToTableName, 'utf-8'));
+        const index = tableData.data.findIndex(item => item[primaryKeyField] === pkValue);
+        if (index === -1) {
+            throw new Error(`${tableName}: No such value for primary key ${primaryKeyField}`);
+        }
+        tableData.data[index] = {...tableData.data[index],...data};
+        await fs.writeFile(pathToTableName, JSON.stringify(tableData, null, '\t'));
+    }
+
+    async delete(filter, tableName = this.currentTable) {
+        if (this.isConnected !== true) {
+            throw new Error('You must connect to the table first.');
+        }
+        const objectsToDelete = await this.filterObjects(filter, tableName);
+        for (const object of objectsToDelete) {
+            await this.deleteObject(object, tableName);
+        }
+    }
+
+    async deleteObject(pkValue, tableName = this.currentTable) {
+        if (this.isConnected !== true) {
+            throw new Error('You must connect to the table first.');
+        }
+        const primaryKeyField = await this.getPrimaryKeyFieldOfTable(tableName);
         const tableData = JSON.parse(await fs.readFile(join(__dirname, '.', 'data', `${tableName}.json`), 'utf-8'));
         if (tableData.references.length !== 0)
         {
@@ -157,53 +195,51 @@ class Pointer {
                 }
                 switch (otherTableData.fields[fkName].onDelete) {
                     case 'Cascade':
+                        // Удаляем запись из основной таблицы
+                        const dataIndexCascade = tableData.data.findIndex(item => item[primaryKeyField] === pkValue);
+                        if (dataIndexCascade !== -1) {
+                            tableData.data.splice(dataIndexCascade, 1);
+                            await fs.writeFile(join(__dirname, '.', 'data', `${tableName}.json`), JSON.stringify(tableData, null, '\t'));
+                        } else {
+                            throw new Error(`${tableName}: Record with id ${pkValue} not found in table ${tableName}`);
+                        }
                         for (const item of otherTableData.data) {
-                            if (item[fkName] === id) {
-                                // Удаляем запись из основной таблицы
-                                const dataIndex = tableData.data.findIndex(item => item.id === id);
-                                if (dataIndex !== -1) {
-                                    tableData.data.splice(dataIndex, 1);
-                                    await fs.writeFile(join(__dirname, '.', 'data', `${tableName}.json`), JSON.stringify(tableData, null, '\t'));
-                                } else {
-                                    throw new Error(`${tableName}: Record with id ${id} not found in table ${tableName}`);
-                                }
+                            if (item[fkName] === pkValue) {
                                 for (const itemInTableWithForeignKey of otherTableData.data) {
-                                    if (itemInTableWithForeignKey[fkName] === id) {
+                                    if (itemInTableWithForeignKey[fkName] === pkValue) {
+                                        const filter = { [fkName]: itemInTableWithForeignKey[fkName] };
                                         // Удаляем запись из таблицы, к которой привязана основная
-                                        await this.delete(itemInTableWithForeignKey[fkName], reference);
+                                        await this.delete(filter, reference);
                                     }        
                                 }
                             }
                         }
                         break;
                     case 'SetNull':
+                        // Удаляем запись из основной таблицы
+                        const dataIndex = tableData.data.findIndex(item => item[primaryKeyField] === pkValue);
+                        if (dataIndex !== -1) {
+                            tableData.data.splice(dataIndex, 1);
+                            await fs.writeFile(join(__dirname, '.', 'data', `${tableName}.json`), JSON.stringify(tableData, null, '\t'));
+                        } else {
+                            throw new Error(`${tableName}: Record with id ${pkValue} not found in table ${tableName}`);
+                        }
                         for (const item of otherTableData.data) {
-                            if (item[fkName] === id) {
-                                // Удаляем запись из основной таблицы
-                                const dataIndex = tableData.data.findIndex(item => item.id === id);
-                                if (dataIndex !== -1) {
-                                    tableData.data.splice(dataIndex, 1);
-                                    await fs.writeFile(join(__dirname, '.', 'data', `${tableName}.json`), JSON.stringify(tableData, null, '\t'));
-                                } else {
-                                    throw new Error(`${tableName}: Record with id ${id} not found in table ${tableName}`);
-                                }
-                                item[foreignKeyFieldName] = null;
+                            if (item[fkName] === pkValue) {
+                                item[fkName] = null;
+                                await fs.writeFile(join(__dirname, '.', 'data', `${reference}.json`), JSON.stringify(otherTableData, null, '\t'));
                             }
                         }
                         break;
                     case 'Restrict':
-                        const relatedRecords = otherTableData.data.filter(item => item[foreignKeyFieldName] === id);
-                        if (relatedRecords.length > 0) {
-                            throw new Error(`${tableName}: Cannot delete record with id=${id} from table ${tableName} because there are related records in table ${reference}`);
-                        }
-                        break;
+                        throw new Error(`${tableName}: Restrict mode, cant delete record with id ${pkValue}`);
                     default:
-                        throw new Error(`${tableName}: Unsupported onDelete action: ${onDeleteAction}`);
+                        throw new Error(`${tableName}: Unsupported onDelete action`);
                 }
             }
         } else {
             // Удаляем запись из основной таблицы
-            const dataIndex = tableData.data.findIndex(item => item.id === id);
+            const dataIndex = tableData.data.findIndex(item => item[primaryKeyField] === pkValue);
             if (dataIndex !== -1) {
                 tableData.data.splice(dataIndex, 1);
                 await fs.writeFile(join(__dirname, '.', 'data', `${tableName}.json`), JSON.stringify(tableData, null, '\t'));
@@ -211,6 +247,40 @@ class Pointer {
                 throw new Error(`${tableName}: Record with id ${id} not found in table ${tableName}`);
             }
         }
+    }
+
+    async getPrimaryKeyFieldOfTable(tableName) {
+        const tableData = JSON.parse(await fs.readFile(join(__dirname, '.', 'data', `${tableName}.json`)));
+        for (const field in tableData.fields) {
+            if (tableData.fields[field].primaryKey) {
+                return field;
+            }
+        }
+        throw new Error(`${tableName}: Table has no primary key`);
+    }
+
+    async filterObjects(filter, tableName) {
+        const primaryKeyField = await this.getPrimaryKeyFieldOfTable(tableName);
+        const tableData = JSON.parse(await fs.readFile(join(__dirname, '.', 'data', `${tableName}.json`)));
+        
+        // Фильтруем объекты, используя критерии из объекта filter
+        const filteredObjects = tableData.data.filter(object => {
+            // Проверяем каждый критерий фильтрации
+            for (const key in filter) {
+                if (object.hasOwnProperty(key) && object[key] !== filter[key]) {
+                    // Если объект не соответствует критерию, исключаем его
+                    return false;
+                }
+            }
+            // Если объект соответствует всем критериям, включаем его
+            return true;
+        });
+
+        // Собираем значения первичного ключа отфильтрованных объектов
+        const primaryKeyValues = filteredObjects.map(object => object[primaryKeyField]);
+
+        // Возвращаем список значений первичного ключа
+        return primaryKeyValues;
     }
 }
 

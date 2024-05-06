@@ -44,20 +44,20 @@ class Table {
         }
     }
 
-    async checkForeignKey(otherTable, fieldName) {
-        const pathToOtherTableName = join(__dirname, '.', 'data', `${otherTable}.json`)
-        if (await exists(pathToOtherTableName)) {
-            const otherTableFileData = await fs.readFile(pathToOtherTableName, 'utf-8');
-            const otherTableFileDataJson = JSON.parse(otherTableFileData);
-            if (Object.keys(otherTableFileDataJson.fields).indexOf(fieldName) === -1) {
-                throw new Error(`Field ${fieldName} in table ${otherTable} does not exist`);
+    async checkForeignKey(tableWithForeignKey, fieldNameOfForeignKey) {
+        const pathToTableWithForeignKey = join(__dirname, '.', 'data', `${tableWithForeignKey}.json`)
+        if (await exists(pathToTableWithForeignKey)) {
+            const tableWithForeignKeyData = await fs.readFile(pathToTableWithForeignKey, 'utf-8');
+            const tableWithForeignKeyDataJson = JSON.parse(tableWithForeignKeyData);
+            if (Object.keys(tableWithForeignKeyDataJson.fields).indexOf(fieldNameOfForeignKey) === -1) {
+                throw new Error(`Field ${fieldNameOfForeignKey} in table ${tableWithForeignKey} does not exist`);
             } else {
-                if (!otherTableFileDataJson.fields[fieldName].primaryKey) {
-                    throw new Error(`Field ${fieldName} in table ${otherTable} is not primary key`);
+                if (!tableWithForeignKeyDataJson.fields[fieldNameOfForeignKey].primaryKey) {
+                    throw new Error(`Field ${fieldNameOfForeignKey} in table ${tableWithForeignKey} is not primary key`);
                 }
             }
         } else {
-            throw new Error(`Table ${otherTable} does not exist`);
+            throw new Error(`Table ${tableWithForeignKey} does not exist`);
         }
     }
 

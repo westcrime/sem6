@@ -9,7 +9,7 @@
 		"name": {
 			"maxLength": 256,
 			"defaultValue": "NoName",
-			"canBeEmpty": false,
+			"canBeEmpty": true,
 			"notNull": true,
 			"type": "StringType"
 		},
@@ -20,6 +20,12 @@
 			"type": "ForeignKeyType"
 		}
 	},
-	"data": [],
+	"data": [
+		{
+			"id": 1,
+			"name": "NoName",
+			"groupId": 1
+		}
+	],
 	"references": []
 }
