@@ -48,6 +48,14 @@ create or replace package body reporting as
         result := result || '<tr><td>Students</td><td>' || students_inserted || '</td><td>' || students_updated || '</td><td>' || students_deleted || '</td></tr>';
         result := result || '</table></body></html>';
 
+        result := result || '<br/><h2>Entries</h2>';
+        result := result || '<ol>';
+        for entry in (select * from journal where date_and_time > restoration_time and action_name != reported_action_name)
+        loop
+            result := result || '<li>' || entry.description || '</li>';
+        end loop;
+        result := result || '</ol>';
+
         param_val (1) := 1;
         owa.init_cgi_env (param_val);
         htp.p(result);
@@ -106,6 +114,13 @@ create or replace package body reporting as
         result := result || '<tr><td>Exams</td><td>' || exams_inserted || '</td><td>' || exams_updated || '</td><td>' || exams_deleted || '</td></tr>';
         result := result || '<tr><td>Students</td><td>' || students_inserted || '</td><td>' || students_updated || '</td><td>' || students_deleted || '</td></tr>';
         result := result || '</table></body></html>';
+
+        result := result || '<ol>';
+        for entry in (select * from journal where date_and_time > restoration_time and action_name != reported_action_name)
+        loop
+            result := result || '<li>' || entry.description || '</li>';
+        end loop;
+        result := result || '</ol>';
 
         param_val (1) := 1;
         owa.init_cgi_env (param_val);
