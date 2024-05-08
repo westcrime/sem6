@@ -50,9 +50,9 @@ create or replace package body reporting as
 
         result := result || '<br/><h2>Entries</h2>';
         result := result || '<ol>';
-        for entry in (select * from journal where date_and_time > restoration_time and action_name != reported_action_name)
+        for entry in (select * from journal where date_and_time > restoration_time and action_name != reported_action_name order by date_and_time)
         loop
-            result := result || '<li>' || entry.description || '</li>';
+            result := result || '<li>' || entry.description || ' for table ' || entry.table_name || '</li>';
         end loop;
         result := result || '</ol>';
 
@@ -94,6 +94,10 @@ create or replace package body reporting as
         
         select max(date_and_time) into restoration_time from journal where action_name = reported_action_name;
 
+        if restoration_time is null then
+            select min(date_and_time) - 1 into restoration_time from journal;
+        end if;
+
         if restoration_time is not null then
             select count(*) into groups_inserted from journal where date_and_time > restoration_time and table_name = 'groups' and action_name = insert_action_name;
             select count(*) into groups_updated from journal where date_and_time > restoration_time and table_name = 'groups' and action_name = update_action_name;
@@ -115,10 +119,11 @@ create or replace package body reporting as
         result := result || '<tr><td>Students</td><td>' || students_inserted || '</td><td>' || students_updated || '</td><td>' || students_deleted || '</td></tr>';
         result := result || '</table></body></html>';
 
+        result := result || '<br/><h2>Entries</h2>';
         result := result || '<ol>';
-        for entry in (select * from journal where date_and_time > restoration_time and action_name != reported_action_name)
+        for entry in (select * from journal where date_and_time > restoration_time and action_name != reported_action_name order by date_and_time)
         loop
-            result := result || '<li>' || entry.description || '</li>';
+            result := result || '<li>' || entry.description || ' for table ' || entry.table_name || '</li>';
         end loop;
         result := result || '</ol>';
 
