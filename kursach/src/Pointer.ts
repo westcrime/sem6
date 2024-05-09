@@ -152,15 +152,8 @@ class Pointer {
             throw new Error('You must connect to the table first.');
         }
         data = await this.validate(data);
-        const primaryKeyField = await this.getPrimaryKeyFieldOfTable(tableName);
-        const pathToTableName = join(__dirname, '.', 'data', `${tableName}.json`);
-        const tableData = JSON.parse(await fs.readFile(pathToTableName, 'utf-8'));
-        const index = tableData.data.findIndex((item: any) => item[primaryKeyField] === pkValue);
-        if (index === -1) {
-            throw new Error(`${tableName}: No such value for primary key ${primaryKeyField}`);
-        }
-        tableData.data[index] = {...tableData.data[index],...data};
-        await fs.writeFile(pathToTableName, JSON.stringify(tableData, null, '\t'));
+        let oldName: string = this.currentTable;
+        await this.updateObject(pkValue, data);
     }
 
     async delete(filter: any, tableName = this.currentTable) {
@@ -248,6 +241,61 @@ class Pointer {
             } else {
                 throw new Error(`${tableName}: Record with id ${pkValue} not found in table ${tableName}`);
             }
+        }
+    }
+
+    async updateObject(pkValue: any, data: any, tableName = this.currentTable) {
+        if (this.isConnected !== true) {
+            throw new Error('You must connect to the table first.');
+        }
+        const primaryKeyField = await this.getPrimaryKeyFieldOfTable(tableName);
+        const tableData = JSON.parse(await fs.readFile(join(__dirname, '.', 'data', `${tableName}.json`), 'utf-8'));
+        if (tableData.references.length !== 0)
+        {
+            for (const reference of tableData.references) {
+                const pathToOtherTable = path.join(__dirname, '.', 'data', `${reference}.json`);
+                const otherTableData = JSON.parse(await fs.readFile(pathToOtherTable, 'utf-8'));
+                let fkName: string = '';
+                for (const field in otherTableData.fields) {
+                    if (otherTableData.fields[field].type === 'ForeignKeyType') {
+                        if (otherTableData.fields[field].otherTable === tableName) {
+                            fkName = field;
+                        }
+                    }
+                }
+                if (fkName === '') {
+                    throw new Error('Foreign key not found');
+                }
+                const pathToTableName = join(__dirname, '.', 'data', `${tableName}.json`);
+                const tableData = JSON.parse(await fs.readFile(pathToTableName, 'utf-8'));
+                const index = tableData.data.findIndex((item: any) => item[primaryKeyField] === pkValue);
+                if (index === -1) {
+                    throw new Error(`${tableName}: No such value for primary key ${primaryKeyField}`);
+                }
+                tableData.data[index] = {...tableData.data[index],...data};
+                await fs.writeFile(pathToTableName, JSON.stringify(tableData, null, '\t'));
+                for (const item of otherTableData.data) {
+                    if (item[fkName] === pkValue) {
+                        for (const itemInTableWithForeignKey of otherTableData.data) {
+                            if (itemInTableWithForeignKey[fkName] === pkValue) {
+                                let dataForOtherTable = itemInTableWithForeignKey;
+                                dataForOtherTable[fkName] = data[primaryKeyField];
+                                // Изменяем запись из таблицы, к которой привязана основная
+                                await this.updateObject(itemInTableWithForeignKey[await this.getPrimaryKeyFieldOfTable(reference)], dataForOtherTable, reference);
+                            }        
+                        }
+                    }
+                }
+            }
+        } else {
+            const pathToTableName = join(__dirname, '.', 'data', `${tableName}.json`);
+            const tableData = JSON.parse(await fs.readFile(pathToTableName, 'utf-8'));
+            const index = tableData.data.findIndex((item: any) => item[primaryKeyField] === pkValue);
+            if (index === -1) {
+                throw new Error(`${tableName}: No such value for primary key ${primaryKeyField}`);
+            }
+            tableData.data[index] = {...tableData.data[index],...data};
+            await fs.writeFile(pathToTableName, JSON.stringify(tableData, null, '\t'));
         }
     }
 
